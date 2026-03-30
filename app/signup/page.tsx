@@ -6,15 +6,16 @@ import { createClient } from "@/lib/supabase"
 import Header from "@/components/Header"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation"
 
 export default function SignUpPage() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [error, setError] = useState<string | null>(null)
     const [loading, setLoading] = useState(false)
-    const [success, setSuccess] = useState(false)
-
     const supabase = createClient()
+    const router = useRouter()
+
 
         
     const handleSubmit = async (e: React.FormEvent) => {
@@ -27,7 +28,15 @@ export default function SignUpPage() {
             setError(error.message)
         }
         else {
-            setSuccess(true)
+            const {data: profile} = await supabase.from("profiles").select("id, username").eq("id", data.user?.id).single()
+            
+            if (profile){
+                router.push(`/profile/${profile.username}`)
+            }
+            else{
+                router.push("/profile/create")
+            }
+            
             // Alert and redirect to somewhere else
         }
         setLoading(false)
@@ -46,58 +55,48 @@ export default function SignUpPage() {
                         Sign Up
                     </h1>
 
-                    {success ? (
-                        <div className="text-center">
-                            <p className="text-green-600 dark:text-green-400 mb-4">
-                                Account created! Check your email for a confirmation link.
-                            </p>
-                        </div>
-                    ) : (
-                        <>
-                            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                                <Input
-                                    type="email"
-                                    placeholder="Email"
-                                    value={email}
-                                    onChange={(e) => {
-                                        setEmail(e.target.value)
-                                        setError(null)
-                                    }}
-                                    required
-                                />
-                                <Input
-                                    type="password"
-                                    placeholder="Password"
-                                    value={password}
-                                    onChange={(e) => {
-                                        setPassword(e.target.value)
-                                        setError(null)
-                                    }}
-                                    required
-                                />
-                                <Button
-                                    type="submit"
-                                    disabled={loading}
-                                    className="w-full py-2 rounded-md bg-gradient-to-r from-violet-600 to-blue-500 text-white font-medium hover:from-violet-700 hover:to-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    {loading ? "Signing up..." : "Sign Up"}
-                                </Button>
-                                {error && <p className="text-red-500 text-sm mt-2 text-center">{error}</p>}
-                            </form>
-                            <div className="border-t border-zinc-300 dark:border-zinc-600 my-6"></div>
-                            <div className="text-center">
-                                <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-3">
-                                    Already have an account?
-                                </p>
-                                <Link
-                                    href="/login"
-                                    className="block w-full py-2 rounded-md border border-zinc-300 text-zinc-700 font-medium hover:bg-zinc-100 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-800"
-                                >
-                                    Sign in
-                                </Link>
-                            </div>
-                        </>
-                    )}
+                    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                        <Input
+                            type="email"
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => {
+                                setEmail(e.target.value)
+                                setError(null)
+                            }}
+                            required
+                        />
+                        <Input
+                            type="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => {
+                                setPassword(e.target.value)
+                                setError(null)
+                            }}
+                            required
+                        />
+                        <Button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full py-2 rounded-md bg-gradient-to-r from-violet-600 to-blue-500 text-white font-medium hover:from-violet-700 hover:to-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {loading ? "Signing up..." : "Sign Up"}
+                        </Button>
+                        {error && <p className="text-red-500 text-sm mt-2 text-center">{error}</p>}
+                    </form>
+                    <div className="border-t border-zinc-300 dark:border-zinc-600 my-6"></div>
+                    <div className="text-center">
+                        <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-3">
+                            Already have an account?
+                        </p>
+                        <Link
+                            href="/login"
+                            className="block w-full py-2 rounded-md border border-zinc-300 text-zinc-700 font-medium hover:bg-zinc-100 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                        >
+                            Sign in
+                        </Link>
+                    </div>
                 </div>
             </main>
         </div>

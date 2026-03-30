@@ -1,5 +1,6 @@
 # claude temp files
 tmpclaude*
+.claude/
 
 # dependencies
 /node_modules

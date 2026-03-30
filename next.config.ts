@@ -8,7 +8,10 @@ const nextConfig: NextConfig = {
           protocol: 'https',
           hostname: 'eycprftwqprcygozcatn.supabase.co',
         },
-
+        {
+          protocol: 'https',
+          hostname: 'places.googleapis.com',
+        },
       ],
     },
 };
