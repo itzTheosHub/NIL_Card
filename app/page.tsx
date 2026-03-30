@@ -1,25 +1,57 @@
+"use client"
 import Link from "next/link";
 import Header from "@/components/Header"
+import {useEffect, useState} from "react" 
+import {useRouter} from "next/navigation"
+import {createClient} from "@/lib/supabase"
 
 export default function HomePage() {
+
+  const [user, setUser] = useState<any>(null)
+  const [profile, setProfile] = useState<any>(null)
+  const [authLoading, setAuthLoading] = useState(true)
+  const supabase = createClient()
+  const router = useRouter()
+
+  useEffect(() => {
+        async function fetchUser() {
+            const {data: {user}} = await supabase.auth.getUser()
+
+            if(user){
+                setUser(user)
+                const {data: profile} = await supabase.from("profiles").select("username").eq("id", user.id).single()
+                if(profile) setProfile(profile)
+            }
+            setAuthLoading(false)
+        }
+        fetchUser()
+        }, [])
+
+
   return (
     <div className="flex min-h-screen flex-col bg-zinc-50 dark:bg-zinc-950">
       <Header>
-        <div className="flex gap-2 sm:gap-3">
-          <Link
-            href="/login"
-            className="rounded-md px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
-          >
-            Sign in
-          </Link>
-          <Link
-            href="/signup"
-            className="rounded-md bg-gradient-to-r from-violet-600 to-blue-500 hover:from-violet-700 hover:to-blue-600 px-4 py-2 text-sm font-medium text-white"
-          >
-            Get Started
-          </Link>
-        </div>
+        {authLoading || user ? (
+            null
+        ) : (
+          <div className="flex gap-2 sm:gap-3">
+
+            <Link
+              href="/login"
+              className="rounded-md px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            >
+              Sign in
+            </Link>
+            <Link
+              href="/signup"
+              className="rounded-md bg-gradient-to-r from-violet-600 to-blue-500 hover:from-violet-700 hover:to-blue-600 px-4 py-2 text-sm font-medium text-white"
+            >
+              Get Started
+            </Link>
+          </div>
+        )}
       </Header>
+      
           
           {/*Hero Section */}
           <main className="flex flex-col items-center justify-center py-12 sm:py-20 px-4 bg-gradient-to-b from-zinc-100 to-zinc-50 dark:from-zinc-900 dark:to-zinc-950">
@@ -33,18 +65,30 @@ export default function HomePage() {
               audience, and brand collaboration opportunities. Share it with one simple link.
             </p>
             <div className="flex flex-col items-center sm:flex-row gap-4 mt-8">
+              {!authLoading && user ? (
               <Link
-                href="/signup"
+                href={`/profile/${profile?.username}`}
                 className="rounded-md bg-gradient-to-r from-violet-600 to-blue-500 hover:from-violet-700 hover:to-blue-600 px-8 py-3 text-base font-medium text-white whitespace-nowrap"
               >
-                Create Your Card
+                View My Card
               </Link>
+              ) : (
+                <>
+                <Link 
+                  href="/signup"
+                className="rounded-md bg-gradient-to-r from-violet-600 to-blue-500 hover:from-violet-700 hover:to-blue-600 px-8 py-3 text-base font-medium text-white whitespace-nowrap"
+                >
+                  Sign up
+                </Link>
+  
               <Link
                 href="/athlete/demo"
                 className="rounded-md border border-zinc-300 bg-white px-8 py-3 text-base font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 whitespace-nowrap"
               >
                 See Example
               </Link>
+              </>
+              )}
             </div>
 
           </main>
