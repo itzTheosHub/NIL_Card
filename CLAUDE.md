@@ -66,6 +66,22 @@ This file tracks project progress for continuity across Claude sessions.
 - **Edit page:** fully working after three bugs fixed (see session log 2026-02-23)
 
 ### Future Ideas
+
+- **Shared SocialIcon Component:** Extract Instagram, TikTok, and X SVG logos into `components/SocialIcon.tsx` — accepts a `platform` prop and returns the correct SVG. Currently the SVGs are copy-pasted in the profile view page and will be needed in `EstReachTab` and other components. Do this during a polish pass.
+
+- **AI Match Score + Estimated Reach (Marketplace Modal):** Replace current "coming soon" pills with two side-by-side cards inside the modal front face.
+  - **Match Score (left):** Large percentage + color-coded label (Strong / Good / Low match). Score breakdown below with 4 factors shown as progress bars: Interest overlap, Audience age match, Engagement rate, Local relevance. Each factor scored 0–100%. Modeled after how Grin and CreatorIQ break down brand-side matching, flipped for the athlete's perspective.
+  - **Estimated Reach (right):** "~2,000 people per post" headline based on athlete's avg views. Breakdown by platform (Instagram, TikTok, X) shown as labeled bars. "Your audience vs their customer" section showing age demographic overlap (18–24, 25–34, 35+). Bottom pill: "X% audience overlap with [Business Name]".
+  - Both cards use dark card style with subtle borders. Score drives a color: green (Strong), yellow (Good), red (Low).
+  - **Why not a gauge:** Gauges require reading a needle → mapping to a scale → interpreting. Number + label + bar does all three in one glance. Gauges also look dated (peaked ~2015).
+  - **Why per-platform reach breakdown:** Brands care about which platform. A gym cares about Instagram/TikTok, not Twitter. Makes platform weighting scannable instantly.
+  - **Why audience overlap is the killer feature:** "72% of your audience is 18–24, which matches Kingdom Fitness's customer base" is the sentence that closes a deal.
+  - Screenshot reference saved at: `/dev/nil_card_cbv/matchAndReachFeature.png`
+  - **Data needed:** athlete profile stats (already in DB), audience demographics (not yet collected — needs new fields on profiles table), business category (from Google Places `primaryTypeDisplayName`), athlete location vs business location for local relevance scoring.
+  - **Scoring formula:** compare athlete's interest tags + audience age data against business category + Google Places data already fetched.
+  - **Priority:** Defer until after Phase 8. Build stub UI first, wire up real scoring logic later.
+
+
 - **Profile View Redesign (Business Card Style):** Current profile view is a long scrolling page — could get very long on mobile once back-of-card content (featured posts, awards, highlights, press articles) is added. Consider redesigning to a compact business card layout: fixed-height card that fits the screen, front/back flip animation (CSS 3D transform), front = photo + name + stats + social links, back = featured posts + awards + press. Keeps mobile experience tight and avoids scroll fatigue. Priority: after back-of-card data is wired up and displayed.
 - **AI Outreach Assistant:** When athletes view their own profile, provide AI-generated suggestions for DMs and messages when reaching out to brands or sharing their profile link (tone, structure, personalization tips)
 - **Local Business Marketplace:** Search engine / directory for local brands, companies, and restaurants — athletes can discover nearby businesses to pitch partnerships to, and businesses can browse athlete profiles
@@ -179,6 +195,38 @@ Dual-sided marketplace like UGC Tank. Plan for it now, build later.
 ---
 
 ## Session Log
+
+**2026-04-01**
+- Privacy policy page — created `app/privacy/privacy.tsx` with HTML from Termly generator
+- Fixed JSX errors: rewrote component to store raw HTML as template literal, rendered via `dangerouslySetInnerHTML` to avoid converting hundreds of `class=`/`style="..."` attributes
+- Fixed UTF-8 encoding artifact (`Â` character) — stripped non-breaking space bytes (`0xC2 0xA0`) from file content
+- Created `app/privacy/page.tsx` to register `/privacy` as a valid Next.js App Router route
+- Stubbed `components/BusinessCard.tsx` (empty, for future use)
+- **Next up:** Bottom CTA banner on homepage, then Phase 8 (`/athletes` directory)
+
+**2026-03-30**
+- Homepage redesign — major overhaul of `app/page.tsx` and new `components/NilCardPreview.tsx`
+- Added auth-aware behavior to homepage: when logged in, header hides Sign In/Get Started (renders `null`), hero CTA changes to "View My Card" linking to `/profile/${profile?.username}`
+- Explained Supabase session token flow: `supabase.auth.getUser()` reads stored token from localStorage/cookies on page load — no API call needed, just reads local session
+- Two-column hero layout: `grid md:grid-cols-2 gap-12 items-center` — left column (headline + CTAs + social proof), right column (NilCardPreview)
+- Social proof section: 4 colored avatar circles with initials (TC, JM, AS, KR) using `style={{ backgroundColor: [...][i] }}` + "Join athletes already on NIL Card" text
+- Built `components/NilCardPreview.tsx` — static front-of-card preview:
+  - Real photo: `/athleteDemoPhoto.jpg` with `BadgeCheck` overlay
+  - Hardcoded data: Jordan Smith, Basketball, Division I, University of Cincinnati '27
+  - Stats grid (purple/pink/blue icon boxes): Total Reach (20.0K), Engagement (5.4%), Avg Reach (8.0K)
+  - Three social rows with real SVG logos: Instagram (gradient), TikTok (black bg), X (black bg)
+  - Flip button at `absolute top-4 right-4` with glassmorphism style + `group-hover:rotate-180` animation
+  - Teaser at bottom: "Flip to see awards, press & featured content"
+- Marketplace teaser section added to homepage: `SAMPLE_BUSINESSES` array (4 hardcoded businesses), business card grid with emoji placeholder, rating + review count, "Pitch →" and "Browse all businesses" buttons routing to `/signup`
+- Mobile CTA button fixes: changed from stacked full-width to `flex-row` with `flex-1` — buttons sit side-by-side evenly on mobile, `scale-90 md:scale-100` on NilCardPreview for mobile breathing room
+- `app/signup/page.tsx` — replaced success state with routing: after signup, checks if profile exists → routes to `/profile/${username}` or `/profile/create`
+- Header nav drawer (`components/Header.tsx`): hamburger menu opens side drawer with Home, Marketplace, My Profile links; Sign Out / Sign In / Get Started conditional on auth state
+- Google Places marketplace (`app/marketplace/page.tsx`): auth-gated, business type selector + location input, proxies Google Places Text Search API via `/api/places/route.ts`, business card grid with photo, rating, website button
+- `app/api/places/route.ts`: API proxy reads `GOOGLE_PLACES_API_KEY` from env, constructs `photoUrl` from Places photo name
+- `next.config.ts`: added `places.googleapis.com` to `images.remotePatterns`
+- `.gitignore`: added `.claude/` to prevent session memory from being committed
+- Fixed multiple bugs during session: wrong href using literal string instead of template literal, logic inversion on auth ternary, missing JSX fragment wrapper, `<div></div>` instead of `null`, invalid `md:scale-80` class → `md:scale-100`, SAMPLE_BUSINESSES typos, marketplace grid structure, `business.rating` shown twice instead of `business.reviews`
+- **Next up:** Add bottom CTA banner to homepage ("Ready to land your first deal?"), then Phase 8 (`/athletes` directory)
 
 **2026-02-26**
 - Profile view page UI redesign — moving toward circular profile card design (inspired by Figma mockups)
