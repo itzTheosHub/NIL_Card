@@ -6,9 +6,12 @@ import { useRouter } from "next/navigation"
 import Header from "@/components/Header"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Star, SlidersHorizontal, RotateCcw, X, Copy, Sparkles } from "lucide-react"
+import { Star, SlidersHorizontal, RotateCcw, X, Copy, Sparkles, TrendingUp, Radio } from "lucide-react"
 import { createClient } from "@/lib/supabase"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
+import MatchScoreTab from "@/components/marketplace/MatchScoreTab"
+import EstReachTab from "@/components/marketplace/EstReachTab"
+import AudienceTab from "@/components/marketplace/AudienceTab"
 
 export default function MarketplacePage(){
     const [query, setQuery] = useState("")
@@ -20,6 +23,8 @@ export default function MarketplacePage(){
     const [selectedPlace, setSelectedPlace] = useState<any>(null)
     const [contentTags, setContentTags] = useState<string[]>([])
     const [flipping, setFlipping] = useState(false)
+    const [activeTab, setActiveTab] = useState<number>(0)
+    const TABS = ["Match Score", "Est. Reach"]
 
     const supabase = createClient()
     const router = useRouter()
@@ -195,24 +200,32 @@ export default function MarketplacePage(){
                                             <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4">
                                                 {place.formattedAddress}
                                             </p>
-                                            <div className="mt-auto">
+                                            <div className="flex gap-2">
                                                 {place.websiteUri ? (
                                                     <a
                                                         href={place.websiteUri}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="inline-block w-full text-center text-sm py-2 rounded-lg bg-gradient-to-r from-violet-600 to-blue-500 text-white font-medium hover:from-violet-700 hover:to-blue-600 transition-all duration-200"
+                                                        className="inline-block flex-1 text-center text-sm py-2 rounded-lg border border-violet-500 text-violet-600 dark:text-violet-400 font-medium hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-all duration-200"
                                                     >
                                                         Visit Website
                                                     </a>
+                                                    
+                                                    
                                                 ) : (
                                                     <button 
                                                         disabled
-                                                        className="inline-block w-full text-center text-sm py-2 rounded-lg border border-zinc-500 dark:border-zinc-700 text-zinc-500  dark:text-zinc-600 cursor-not-allowed"
+                                                        className="inline-block flex-1 text-center text-sm py-2 rounded-lg border border-zinc-500 dark:border-zinc-700 text-zinc-500  dark:text-zinc-600 cursor-not-allowed"
                                                         >
                                                             No Website
                                                     </button>
                                                 )}
+                                                <button
+                                                    onClick={(e) => {e.stopPropagation(); setSelectedPlace(place); setFlipped(true) }}
+                                                    className="flex-1 text-center text-sm py-2 rounded-lg bg-gradient-to-r from-violet-600 to-blue-500 text-white font-medium hover:from-violet-700 hover:to-blue-600 transition-all duration-200"
+                                                >
+                                                    Pitch →
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -238,11 +251,11 @@ export default function MarketplacePage(){
                     <div 
                         onClick={(e) => e.stopPropagation()}
                         className="relative bg-white dark:bg-zinc-900 rounded-2xl w-full max-w-2xl overflow-hidden">
-                        <div style={{perspective: "1000px", height: "640px"}}>
-                            <div style={{transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)", transition: "transform 0.6s", transformStyle: "preserve-3d", position: "relative", width: "100%", height: "100%"}} >
+                        <div style={{perspective: "1000px", height: "745px"}}>
+                            <div onClick={() => handleFlip(!flipped)} style={{transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)", transition: "transform 0.6s", transformStyle: "preserve-3d", position: "relative", width: "100%", height: "100%", cursor: "pointer"}} >
 
                                 {/* Front */}
-                                <div style={{backfaceVisibility: "hidden", position: "absolute", inset: 0, overflowY: "auto", pointerEvents: flipped ? "none" : "auto"}}>
+                                <div style={{backfaceVisibility: "hidden", position: "absolute", inset: 0, pointerEvents: flipped ? "none" : "auto", display: "flex", flexDirection: "column"}}>
                                     <div className="relative h-56 w-full">
                                         {selectedPlace.photoUrl ? (
                                             <Image
@@ -255,21 +268,24 @@ export default function MarketplacePage(){
                                             <div className="w-full h-full bg-gradient-to-br from-violet-600 to-blue-500" />
                                         )}
                                         <button
-                                            onClick={() => { if (!flipping) setSelectedPlace(null) }}
+                                            onClick={(e) => { e.stopPropagation(); if (!flipping) setSelectedPlace(null) }}
                                             className="absolute top-3 right-3 z-10 flex items-center gap-1.5 bg-black/50 hover:bg-black/70 rounded-full px-3 py-1.5 transition"
                                         >
                                             <X className="w-3.5 h-3.5 text-white" />
                                             <span className="text-white text-xs font-medium">Close</span>
                                         </button>
                                         <button
-                                            onClick={() => handleFlip(!flipped)}
+                                            onClick={(e) => { e.stopPropagation(); handleFlip(!flipped) }}
                                             className="absolute top-3 left-3 z-10 flex items-center gap-1.5 bg-black/50 hover:bg-black/70 rounded-full px-3 py-1.5 transition"
                                         >
                                             <RotateCcw className="w-3.5 h-3.5 text-white" />
                                             <span className="text-white text-xs font-medium">Flip Card</span>
                                         </button>
+                                        <p className="absolute top-3 left-1/2 -translate-x-1/2 z-10 text-xs text-center text-zinc-400 dark:text-zinc-500">
+                                            Click anywhere to flip!
+                                        </p>
                                     </div>
-                                    <div className="p-5 flex flex-col gap-3">
+                                    <div className="p-5 flex flex-col gap-3 flex-1 overflow-y-auto">
                                         <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
                                             {selectedPlace.displayName?.text}
                                         </h2>
@@ -294,15 +310,31 @@ export default function MarketplacePage(){
                                                 {selectedPlace.nationalPhoneNumber}
                                             </p>
                                         )}
-                                        {selectedPlace.regularOpeningHours?.weekdayDescriptions && (
-                                            <div className="flex flex-col gap-1">
-                                                <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Hours</p>
-                                                {selectedPlace.regularOpeningHours.weekdayDescriptions.map((day: string, i: number) => (
-                                                    <p key={i} className="text-xs text-zinc-500 dark:text-zinc-400">{day}</p>
-                                                ))}
-                                            </div>
-                                        )}
-                                        <div className="flex gap-2 mt-2">
+                                        {/* Tab bar */}
+                                        <div className="flex gap-1 bg-zinc-100 dark:bg-zinc-800 rounded-xl p-1 mb-4">
+                                            {TABS.map((tab, i) => (
+                                                <button
+                                                    key={tab}
+                                                    onClick={(e) => { e.stopPropagation(); setActiveTab(i) }}
+                                                    className={`flex-1 text-xs font-medium py-1.5 rounded-lg transition-all ${
+                                                        activeTab === i
+                                                            ? "bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 shadow-sm border border-zinc-200 dark:border-zinc-600"
+                                                            : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
+                                                    }`}
+                                                >
+                                                    {tab}
+                                                </button>
+                                            ))}
+                                        </div>
+                                        {/* Tab content */}
+                                        <div className="min-h-[140px]">
+                                            {activeTab === 0 && <MatchScoreTab />}
+                                            {activeTab === 1 && <EstReachTab />}
+                                        </div>
+                                    </div>
+
+                                        {/* Visit Website & Google Maps Buttons */}
+                                        <div className="flex gap-2 px-5 pb-5 flex-shrink-0">
                                             {selectedPlace.websiteUri ? (
                                                 <a
                                                     href={selectedPlace.websiteUri}
@@ -334,7 +366,6 @@ export default function MarketplacePage(){
                                                 </a>
                                             )}
                                         </div>
-                                    </div>
                                 </div>
 
                                 {/* Back */}
@@ -362,18 +393,18 @@ export default function MarketplacePage(){
                                             AI-Tailored Pitch — Coming Soon
                                         </div>
                                         <button
-                                            onClick={() => setSelectedPlace(null)}
+                                            onClick={(e) => { e.stopPropagation(); setSelectedPlace(null) }}
                                             className="absolute top-3 right-3 z-10 flex items-center gap-1.5 bg-black/50 hover:bg-black/70 rounded-full px-3 py-1.5 transition"
                                         >
                                             <X className="w-3.5 h-3.5 text-white" />
                                             <span className="text-white text-xs font-medium">Close</span>
                                         </button>
                                         <button
-                                            onClick={() => handleFlip(false)}
+                                            onClick={(e) => { e.stopPropagation(); handleFlip(false) }}
                                             className="absolute top-3 left-3 z-10 flex items-center gap-1.5 bg-black/50 hover:bg-black/70 rounded-full px-3 py-1.5 transition"
                                         >
                                             <RotateCcw className="w-3.5 h-3.5 text-white" />
-                                            <span className="text-white text-xs font-medium">Flip Back</span>
+                                            <span className="text-white text-xs font-medium">Flip Card</span>
                                         </button>
                                     </div>
 
@@ -385,7 +416,7 @@ export default function MarketplacePage(){
                                             {`Hi ${selectedPlace.displayName?.text},\n\nI'm ${profile?.full_name}, an athlete at ${profile?.university}. I create ${contentTags.join(", ").toLowerCase()} content and have a growing audience — I think it could be a great fit for your brand.\n\nI'd love to collaborate if it makes sense.\n\nCheck out my NIL Card here: ${typeof window !== "undefined" ? window.location.origin : ""}/profile/${profile?.username}\n\nLet me know what you think,\n${profile?.full_name}`}
                                         </div>
                                         <button
-                                            onClick={() => navigator.clipboard.writeText(`Hi ${selectedPlace.displayName?.text},\n\nI'm ${profile?.full_name}, an athlete at ${profile?.university}. I create ${contentTags.join(", ").toLowerCase()} content and have a growing audience — I think it could be a great fit for your brand.\n\nI'd love to collaborate if it makes sense.\n\nCheck out my NIL Card here: ${window.location.origin}/profile/${profile?.username}\n\nLet me know what you think,\n${profile?.full_name}`)}
+                                            onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(`Hi ${selectedPlace.displayName?.text},\n\nI'm ${profile?.full_name}, an athlete at ${profile?.university}. I create ${contentTags.join(", ").toLowerCase()} content and have a growing audience — I think it could be a great fit for your brand.\n\nI'd love to collaborate if it makes sense.\n\nCheck out my NIL Card here: ${window.location.origin}/profile/${profile?.username}\n\nLet me know what you think,\n${profile?.full_name}`) }}
                                             className="w-full py-2 flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-violet-600 to-blue-500 text-white text-sm font-medium hover:from-violet-700 hover:to-blue-600 transition-all duration-200"
                                         >
                                             <Copy className="w-4 h-4" />
