@@ -11,7 +11,6 @@ import { createClient } from "@/lib/supabase"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
 import MatchScoreTab from "@/components/marketplace/MatchScoreTab"
 import EstReachTab from "@/components/marketplace/EstReachTab"
-import AudienceTab from "@/components/marketplace/AudienceTab"
 
 export default function MarketplacePage(){
     const [query, setQuery] = useState("")
