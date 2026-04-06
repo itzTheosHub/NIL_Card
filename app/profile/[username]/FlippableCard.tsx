@@ -29,6 +29,14 @@ const iconMap = {
     "Ambassador": Award
 }
 
+const tagColors = [
+    { text: "text-violet-400", border: "rgba(139,92,246,0.3)", bg: "rgba(139,92,246,0.08)" },
+    { text: "text-purple-400", border: "rgba(168,85,247,0.3)", bg: "rgba(168,85,247,0.08)" },
+    { text: "text-blue-400", border: "rgba(59,130,246,0.3)", bg: "rgba(59,130,246,0.08)" },
+    { text: "text-indigo-400", border: "rgba(99,102,241,0.3)", bg: "rgba(99,102,241,0.08)" },
+    { text: "text-cyan-400", border: "rgba(6,182,212,0.3)", bg: "rgba(6,182,212,0.08)" },
+]
+
 type Props = {
     profile: any
     socialLinks: any[]
@@ -49,6 +57,7 @@ export default function FlippableCard({ profile, socialLinks, profileContentTags
 
     return (
         <div className="[perspective:1000px]">
+            <div className="holographic-border rounded-2xl p-[3px]">
             <div className={`relative transition-transform duration-700 [transform-style:preserve-3d] ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}>
 
                 {/* Front Face */}
@@ -56,7 +65,7 @@ export default function FlippableCard({ profile, socialLinks, profileContentTags
                     className="[backface-visibility:hidden]"
                     style={{WebkitBackfaceVisibility: "hidden"}}
                 >
-                    <div className="relative overflow-hidden rounded-2xl bg-white backdrop-blur-sm shadow-lg dark:border dark:border-zinc-700 dark:bg-zinc-900 hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+                    <div className="relative overflow-hidden rounded-2xl bg-white backdrop-blur-sm shadow-lg dark:border dark:border-zinc-700 dark:bg-zinc-900 transition-all duration-300">
                         {/* Flip Button */}
                         <button
                             onClick={() => setIsFlipped(true)}
@@ -135,7 +144,6 @@ export default function FlippableCard({ profile, socialLinks, profileContentTags
                                     <div className="text-xs text-gray-500 dark:text-zinc-400">Avg Reach</div>
                                 </div>
                             </div>
-
                             {/* Social Media Links */}
                             <div className="space-y-3 mt-4 text-left">
                                 <div className="flex items-center gap-4 mb-3">
@@ -229,14 +237,18 @@ export default function FlippableCard({ profile, socialLinks, profileContentTags
                             </div>
                             <p className="text-gray-700 leading-relaxed dark:text-zinc-300">{profile.bio}</p>
                             <div className="flex flex-wrap gap-2 mt-4">
-                                {profileContentTags?.map((tag) => (
+                                {profileContentTags?.map((tag, index) => {
+                                    const color = tagColors[index % tagColors.length]
+                                    return (
                                     <span
                                         key={tag.tag_id}
-                                        className="px-3 py-1 rounded-full bg-linear-to-r from-violet-600 to-blue-500 text-white text-sm font-medium hover:from-violet-700 hover:to-blue-600 hover:scale-105 transition-all cursor-pointer"
+                                        className={`px-3 py-1 rounded-full text-sm font-medium border hover:scale-105 transition-all cursor-pointer ${color.text}`}
+                                        style={{ backgroundColor: color.bg, borderColor: color.border }}
                                     >
                                         {(tag.content_tags as any)?.name}
                                     </span>
-                                ))}
+                                    )
+                                })}
                             </div>
                         </div>
 
@@ -296,21 +308,41 @@ export default function FlippableCard({ profile, socialLinks, profileContentTags
                                 </div>
                                 <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                                     {featuredPosts.map((post) => {
-                                        const postId = post.url.split("/video/")[1].split("?")[0]
-
-                                    return (
-                                        <div
-                                            key={post.id}
-                                            className="snap-start shrink-0 w-[325px] h-[400px] overflow-hidden rounded-xl"
-                                        >
-                                            <iframe
-                                                src={`https://www.tiktok.com/embed/v2/${postId}`}
-                                                width="325"
-                                                height="600"
-                                            />
-                                        </div>
-                                    )
-                                })}
+                                        if (post.platform === "instagram") {
+                                            return (
+                                                <a
+                                                    key={post.id}
+                                                    href={post.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="snap-start shrink-0 w-[280px] flex flex-col gap-2 p-4 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 hover:border-violet-400 transition-all"
+                                                >
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 flex-shrink-0" />
+                                                        <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Instagram Post</span>
+                                                    </div>
+                                                    {post.caption && (
+                                                        <p className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-3">{post.caption}</p>
+                                                    )}
+                                                    <span className="text-xs font-medium text-violet-500 mt-auto">View on Instagram →</span>
+                                                </a>
+                                            )
+                                        } else {
+                                            const postId = post.url.split("/video/")[1]?.split("?")[0]
+                                            return (
+                                                <div
+                                                    key={post.id}
+                                                    className="snap-start shrink-0 w-[325px] h-[400px] overflow-hidden rounded-xl"
+                                                >
+                                                    <iframe
+                                                        src={`https://www.tiktok.com/embed/v2/${postId}`}
+                                                        width="325"
+                                                        height="600"
+                                                    />
+                                                </div>
+                                            )
+                                        }
+                                    })}
 
                                 </div>
                             </div>
@@ -405,6 +437,7 @@ export default function FlippableCard({ profile, socialLinks, profileContentTags
 
                     </div>
                 </div>
+            </div>
             </div>
         </div>
     )
