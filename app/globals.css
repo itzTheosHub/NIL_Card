@@ -153,3 +153,16 @@
 .animate-fade-slide-out {
   animation: fadeSlideOut 0.4s ease forwards;
 }
+
+
+@keyframes holographic {
+  0% { background-position: 0% 50% }
+  50% { background-position: 100% 50% }
+  100% { background-position: 0% 50% }
+}
+
+.holographic-border {
+  background: linear-gradient(135deg, #8B5CF6, #A855F7, #3B82F6, #6366F1, #06B6D4, #3B82F6, #8B5CF6);
+  background-size: 300%;
+  animation: holographic 2.5s linear infinite;
+}

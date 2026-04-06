@@ -196,6 +196,19 @@ Dual-sided marketplace like UGC Tank. Plan for it now, build later.
 
 ## Session Log
 
+**2026-04-02**
+- Marketplace UI polish — click anywhere on modal card to flip, `stopPropagation` on all buttons
+- Added Pitch → button to grid cards, gradient style, opens modal directly to back face
+- Replaced hours section in modal with tab bar (Match Score / Est. Reach / Audience)
+- Built tab bar using pill/segmented control style (`bg-zinc-100 rounded-xl p-1`)
+- Built `components/marketplace/MatchScoreTab.tsx` — score bar, 4 breakdown rows, "Sample data" disclaimer
+- Built `components/marketplace/EstReachTab.tsx` — total reach + audience overlap tiles, per-platform bars
+- Pinned Visit Website / View on Maps buttons to bottom of modal front face (flex column layout)
+- Decided to replace Audience tab with Contact Info tab (audience demographics not feasible for MVP)
+- Fixed Vercel build error: merged `app/privacy/privacy.tsx` content directly into `app/privacy/page.tsx`
+- **Known issue:** Visit Website and Pitch buttons on grid cards slightly off-center — needs alignment fix
+- **Next up:** Build `AudienceTab` → replaced by Contact Info tab, then commit, then Phase 8
+
 **2026-04-01**
 - Privacy policy page — created `app/privacy/privacy.tsx` with HTML from Termly generator
 - Fixed JSX errors: rewrote component to store raw HTML as template literal, rendered via `dangerouslySetInnerHTML` to avoid converting hundreds of `class=`/`style="..."` attributes

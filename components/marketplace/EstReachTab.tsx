@@ -32,7 +32,7 @@ export default function EstReachTab() {
                     </div>
                 ))}
             </div>
-            <p className="text-[10px] text-zinc-400 text-center mt-3">Sample data — real reach coming soon</p>
+            <p className="text-[10px] text-zinc-400 text-center mt-3">Sample data — AI-reach coming soon</p>
         </div>
     )
 }

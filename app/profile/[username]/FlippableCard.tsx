@@ -309,23 +309,19 @@ export default function FlippableCard({ profile, socialLinks, profileContentTags
                                 <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                                     {featuredPosts.map((post) => {
                                         if (post.platform === "instagram") {
+                                            const shortcode = post.url.split("/p/")[1]?.split("/")[0]
                                             return (
-                                                <a
+                                                <div
                                                     key={post.id}
-                                                    href={post.url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="snap-start shrink-0 w-[280px] flex flex-col gap-2 p-4 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 hover:border-violet-400 transition-all"
+                                                    className="snap-start shrink-0 w-[325px] h-[400px] overflow-hidden rounded-xl"
                                                 >
-                                                    <div className="flex items-center gap-2">
-                                                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 flex-shrink-0" />
-                                                        <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Instagram Post</span>
-                                                    </div>
-                                                    {post.caption && (
-                                                        <p className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-3">{post.caption}</p>
-                                                    )}
-                                                    <span className="text-xs font-medium text-violet-500 mt-auto">View on Instagram →</span>
-                                                </a>
+                                                    <iframe
+                                                        src={`https://www.instagram.com/p/${shortcode}/embed/`}
+                                                        width="325"
+                                                        height="400"
+                                                        className="border-0"
+                                                    />
+                                                </div>
                                             )
                                         } else {
                                             const postId = post.url.split("/video/")[1]?.split("?")[0]

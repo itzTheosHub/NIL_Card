@@ -199,13 +199,13 @@ export default function MarketplacePage(){
                                             <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4">
                                                 {place.formattedAddress}
                                             </p>
-                                            <div className="flex gap-2">
+                                            <div className="flex gap-2 mt-auto">
                                                 {place.websiteUri ? (
                                                     <a
                                                         href={place.websiteUri}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="inline-block flex-1 text-center text-sm py-2 rounded-lg border border-violet-500 text-violet-600 dark:text-violet-400 font-medium hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-all duration-200"
+                                                        className="flex flex-1 items-center justify-center text-center text-sm py-2 rounded-lg border border-violet-500 text-violet-600 dark:text-violet-400 font-medium hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-all duration-200"
                                                     >
                                                         Visit Website
                                                     </a>
@@ -214,7 +214,7 @@ export default function MarketplacePage(){
                                                 ) : (
                                                     <button 
                                                         disabled
-                                                        className="inline-block flex-1 text-center text-sm py-2 rounded-lg border border-zinc-500 dark:border-zinc-700 text-zinc-500  dark:text-zinc-600 cursor-not-allowed"
+                                                        className="flex flex-1 items-center justify-center text-center text-sm py-2 rounded-lg border border-zinc-500 dark:border-zinc-700 text-zinc-500  dark:text-zinc-600 cursor-not-allowed"
                                                         >
                                                             No Website
                                                     </button>
@@ -339,31 +339,25 @@ export default function MarketplacePage(){
                                                     href={selectedPlace.websiteUri}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="flex-1 text-center text-sm py-2 rounded-lg bg-gradient-to-r from-violet-600 to-blue-500 text-white font-medium hover:from-violet-700 hover:to-blue-600 transition-all duration-200"
+                                                    className="flex flex-1 items-center justify-center text-center text-sm py-2 rounded-lg border border-violet-500 text-violet-600 dark:text-violet-400 font-medium hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-all duration-200"
                                                 >
                                                     Visit Website
                                                 </a>
                                             ) : (
                                                 <button 
                                                     disabled
-                                                    className="flex-1 text-center text-sm py-2 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-500  dark:text-zinc-600 cursor-not-allowed"
+                                                    className="flex flex-1 items-center justify-center text-center text-sm py-2 rounded-lg border border-violet-500 text-violet-600 dark:text-violet-400 font-medium hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-all duration-200"
                                                 >
                                                     No Website
                                                 </button>
                                                 
-                                                    
-                                                
                                             )}
-                                            {selectedPlace.googleMapsUri && (
-                                                <a
-                                                    href={selectedPlace.googleMapsUri}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="flex-1 text-center text-sm py-2 rounded-lg border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 font-medium hover:bg-emerald-50
-                                                    dark:hover:bg-emerald-900/20 transition-all duration-200">
-                                                    View on Maps
-                                                </a>
-                                            )}
+                                            <button
+                                                onClick={(e) => {e.stopPropagation(); handleFlip(true)}}
+                                                className="flex-1 text-center text-sm py-2 rounded-lg bg-gradient-to-r from-violet-600 to-blue-500 text-white font-medium hover:from-violet-700 hover:to-blue-600 transition-all duration-200"
+                                            >
+                                                Pitch →
+                                            </button>
                                         </div>
                                 </div>
 

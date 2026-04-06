@@ -39,7 +39,7 @@ export default function MatchScoreTab({ matchScore = 92 }: { matchScore?: number
                     </div>
                 ))}
             </div>
-            <p className="text-[10px] text-zinc-400 text-center mt-3">Sample data — real scores coming soon</p>
+            <p className="text-[10px] text-zinc-400 text-center mt-3">Sample data — AI-scores coming soon</p>
         </div>
     )
 }

@@ -745,41 +745,46 @@ export default function EditProfilePage({initialFormData, initialSocialLinks, in
                       Featured Posts
                     </h2>
                     {featuredPosts.map((post, index) => (
-                      <div key={index} className="flex flex-col gap-2">
+                      <div key={index} className="flex flex-col gap-3 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50 p-4">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Post {index + 1}</span>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setFeaturedPosts(featuredPosts.filter((_, i) => i !== index))}
+                            className="text-zinc-400 hover:text-red-500 h-6 px-2 text-xs">
+                            Remove
+                          </Button>
+                        </div>
                         <Input
-                          placeholder="URL"
+                          placeholder="Paste post URL"
                           value={post.url}
                           onChange={(e) => {
                             const updated = [...featuredPosts]
                             updated[index].url = e.target.value
                             setFeaturedPosts(updated)
                           }} />
-                        <select
-                          className="w-full h-9 px-3 rounded-md border border-input bg-transparent text-foreground dark:bg-input/30 text-s"
-                          value={post.platform}
-                          onChange={(e) => {
-                            const updated = [...featuredPosts]
-                            updated[index].platform = e.target.value
-                            setFeaturedPosts(updated)
-                          }}>
-                          <option value="tiktok">TikTok</option>
-                        </select>
-                        <Input
-                          placeholder="Caption"
-                          value={post.caption}
-                          onChange={(e) => {
-                            const updated = [...featuredPosts]
-                            updated[index].caption = e.target.value
-                            setFeaturedPosts(updated)
-                          }} />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setFeaturedPosts(featuredPosts.filter((_, i) => i !== index))}
-                          className="text-zinc-500 hover:text-red-500 self-start">
-                          Remove
-                        </Button>
+                        <div className="flex gap-2">
+                          {["tiktok", "instagram"].map((platform) => (
+                            <button
+                              key={platform}
+                              type="button"
+                              onClick={() => {
+                                const updated = [...featuredPosts]
+                                updated[index].platform = platform
+                                setFeaturedPosts(updated)
+                              }}
+                              className={`flex-1 py-1.5 rounded-full text-sm font-medium transition-all capitalize ${
+                                post.platform === platform
+                                  ? "bg-gradient-to-r from-violet-600 to-blue-500 text-white"
+                                  : "bg-zinc-100 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-600"
+                              }`}
+                            >
+                              {platform === "tiktok" ? "TikTok" : "Instagram"}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     ))}
                     <Button
