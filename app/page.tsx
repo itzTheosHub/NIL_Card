@@ -121,7 +121,7 @@ export default function HomePage() {
                         Create my free card
                       </Link>
                       <Link
-                        href="/athlete/demo"
+                        href="/profile/theo-colosimo"
                         className="flex-1 text-center rounded-md bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 px-4 py-3 text-base font-medium text-zinc-800 dark:text-zinc-200"
                       >
                         See an Example →
