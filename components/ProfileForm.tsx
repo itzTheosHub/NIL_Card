@@ -393,12 +393,19 @@ export default function EditProfilePage({initialFormData, initialSocialLinks, in
 
                       <div className="space-y-2">
                         <Label htmlFor="division">Division</Label>
-                        <Input
+                        <select
                           id="division"
                           value={formData.division}
                           onChange={(e) => setFormData({ ...formData, division: e.target.value })}
-                          placeholder="Division I"
-                        />
+                          className="w-full h-9 px-3 rounded-md border border-input bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 dark:border-zinc-700 text-sm"
+                        >
+                          <option value="">Select division</option>
+                          <option value="Division I">Division I</option>
+                          <option value="Division II">Division II</option>
+                          <option value="Division III">Division III</option>
+                          <option value="NAIA">NAIA</option>
+                          <option value="JUCO">JUCO</option>
+                        </select>
                       </div>
                     </div>
                   </div>

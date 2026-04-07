@@ -7,20 +7,6 @@ import EditProfileButton from "./EditProfileButton"
 import Header from "@/components/Header"
 import FlippableCard from "./FlippableCard"
 
-function formatNumber(num:number) : string {
-    if ( num >= 1000000){
-        return `${(num / 1000000).toFixed(1)}M`;
-    }
-    if (num >= 1000){
-        return `${(num / 1000).toFixed(1)}K`;
-    }
-        
-    return num.toString();
-}   
-
-function formatEngagement(num:number) : string {
-    return `${(num)}%`;
-}
 
 export default async function ProfilePage( {params}: { params: Promise<{ username: string }> }) {
 
@@ -43,9 +29,6 @@ export default async function ProfilePage( {params}: { params: Promise<{ usernam
     const {data: highlights} = await supabase.from("highlights").select("*").eq("profile_id", profile.id)
     const {data: pressArticles} = await supabase.from("press_articles").select("*").eq("profile_id", profile.id)
 
-    const formattedEngagement = formatEngagement(profile.engagement_rate)
-    const formattedTotalFollowers = formatNumber(profile.total_followers)
-    const formattedAvgViews = formatNumber(profile.avg_views)
 
     const iconMap = {
         "Instagram Post": Camera,

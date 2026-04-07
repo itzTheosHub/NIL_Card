@@ -6,13 +6,15 @@ import { Eye, Users, TrendingUp, Camera, Video, Package, Calendar, Award, Share2
      GraduationCap, ExternalLink, ImagePlus, ImagePlay, MessageSquareQuote, Youtube, RotateCcw, Star, Newspaper } from "lucide-react"
 import ContactSection from "./ContactSection"
 
-function formatNumber(num: number): string {
+function formatNumber(num: number | null): string {
+    if (num == null) return "—"
     if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`
     if (num >= 1000) return `${(num / 1000).toFixed(1)}K`
     return num.toString()
 }
 
-function formatEngagement(num: number): string {
+function formatEngagement(num: number | null): string {
+    if (num == null) return "—"
     return `${num}%`
 }
 
@@ -107,7 +109,7 @@ export default function FlippableCard({ profile, socialLinks, profileContentTags
                             <div className="flex items-center justify-center gap-3 mt-1">
                                 <div className="flex-1 max-w-[40px] h-[1px] bg-gradient-to-l from-zinc-600/50 dark:from-violet-400/30 to-transparent" />
                                 <span className="text-sm text-zinc-600 dark:text-violet-400/70 whitespace-nowrap">
-                                    {profile.year_in_school} • {profile.sport} • {profile.division}
+                                    {profile.sport} • {profile.division}
                                 </span>
                                 <div className="flex-1 max-w-[40px] h-[1px] bg-gradient-to-r from-zinc-600/50 dark:from-violet-400/30 to-transparent" />
                             </div>
@@ -218,7 +220,7 @@ export default function FlippableCard({ profile, socialLinks, profileContentTags
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <div className="text-right">
-                                                    <div className="font-semibold text-zinc-900 dark:text-white">{formatNumber(link.follower_count)}</div>
+                                                    <div className="font-semibold text-zinc-900 dark:text-white">{formatNumber(link.follower_count ?? null)}</div>
                                                     <div className="text-xs text-zinc-500 dark:text-zinc-400">followers</div>
                                                 </div>
                                                 <ExternalLink className={`w-4 h-4 text-zinc-400 transition-colors ${hoverColor}`} />
