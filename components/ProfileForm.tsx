@@ -115,7 +115,7 @@ const availableDeliverables = [
 export default function EditProfilePage({initialFormData, initialSocialLinks, initialTags, initialDeliverables, initialFeaturedPosts, initialAwards, initialHighlights, initialPressArticles ,onSubmit, submitLabel, loadingLabel, pageTitle, pageSubtitle}: EditProfileFormProps) {
   const [formData, setFormData] = useState(initialFormData ??{
     fullName: "",
-    bio: "",
+    bio: "[Sport] athlete at [School]. I create content around [topic] and [topic], and I'm passionate about building my brand both on and off the field. With a growing audience across social media, I love connecting with brands that align with my values and lifestyle. Open to partnerships in [industry] and [industry].",
     school: "",
     sport: "",
     gradYear: "",
@@ -347,6 +347,7 @@ export default function EditProfilePage({initialFormData, initialSocialLinks, in
                         onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                         placeholder="Point guard passionate about community outreach"
                       />
+                      <p className="text-xs text-zinc-400 dark:text-zinc-500">Replace the bracketed parts with your own details.</p>
                     </div>
                   </div>
 
@@ -771,7 +772,21 @@ export default function EditProfilePage({initialFormData, initialSocialLinks, in
                             const updated = [...featuredPosts]
                             updated[index].url = e.target.value
                             setFeaturedPosts(updated)
-                          }} />
+                          }}
+                          onBlur={async (e) => {
+                            const url = e.target.value
+                            if (!url) return
+                            try {
+                              const res = await fetch(`/api/resolve-url?url=${encodeURIComponent(url)}`)
+                              const data = await res.json()
+                              if (data.resolvedUrl) {
+                                const updated = [...featuredPosts]
+                                updated[index].url = data.resolvedUrl
+                                setFeaturedPosts(updated)
+                              }
+                            } catch {}
+                          }}
+                        />
                         <div className="flex gap-2">
                           {["tiktok", "instagram"].map((platform) => (
                             <button
@@ -794,13 +809,18 @@ export default function EditProfilePage({initialFormData, initialSocialLinks, in
                         </div>
                       </div>
                     ))}
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setFeaturedPosts([...featuredPosts, {url: "", platform: "tiktok", caption: ""}])}
-                    >
-                      + Add Featured Post
-                    </Button>
+                    {featuredPosts.length < 3 && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setFeaturedPosts([...featuredPosts, {url: "", platform: "tiktok", caption: ""}])}
+                      >
+                        + Add Featured Post
+                      </Button>
+                    )}
+                    {featuredPosts.length >= 3 && (
+                      <p className="text-xs text-zinc-400 dark:text-zinc-500">Maximum 3 featured posts reached.</p>
+                    )}
                   </CardContent>
                 </Card>
                 <Card className="overflow-hidden bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg dark:border dark:border-zinc-700 dark:bg-zinc-900/80">
@@ -836,12 +856,17 @@ export default function EditProfilePage({initialFormData, initialSocialLinks, in
                         </Button>
                       </div>
                     ))}
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setAwards([...awards, { title: "", description: "" }])}>
-                      + Add Award
-                    </Button>
+                    {awards.length < 3 && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setAwards([...awards, { title: "", description: "" }])}>
+                        + Add Award
+                      </Button>
+                    )}
+                    {awards.length >= 3 && (
+                      <p className="text-xs text-zinc-400 dark:text-zinc-500">Maximum 3 awards reached.</p>
+                    )}
                   </CardContent>
                 </Card>
 
@@ -878,12 +903,17 @@ export default function EditProfilePage({initialFormData, initialSocialLinks, in
                         </Button>
                       </div>
                     ))}
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setHighlights([...highlights, { title: "", description: "" }])}>
-                      + Add Highlight
-                    </Button>
+                    {highlights.length < 3 && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setHighlights([...highlights, { title: "", description: "" }])}>
+                        + Add Highlight
+                      </Button>
+                    )}
+                    {highlights.length >= 3 && (
+                      <p className="text-xs text-zinc-400 dark:text-zinc-500">Maximum 3 highlights reached.</p>
+                    )}
                   </CardContent>
                 </Card>
                 <Card className="overflow-hidden bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg dark:border dark:border-zinc-700 dark:bg-zinc-900/80">
@@ -919,12 +949,17 @@ export default function EditProfilePage({initialFormData, initialSocialLinks, in
                         </Button>
                       </div>
                     ))}
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setPressArticles([...pressArticles, { url : "", title: "" }])}>
-                      + Add Article
-                    </Button>
+                    {pressArticles.length < 3 && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setPressArticles([...pressArticles, { url: "", title: "" }])}>
+                        + Add Article
+                      </Button>
+                    )}
+                    {pressArticles.length >= 3 && (
+                      <p className="text-xs text-zinc-400 dark:text-zinc-500">Maximum 3 articles reached.</p>
+                    )}
                   </CardContent>
                 </Card>
 

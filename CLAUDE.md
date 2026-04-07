@@ -99,6 +99,15 @@ This file tracks project progress for continuity across Claude sessions.
 - **AI-Powered Marketplace Search:** Use athlete profile data (sport, school, follower count, content tags, engagement rate) to generate a personalized business search via Claude API. Instead of manually selecting a business type, the AI analyzes the athlete's profile and suggests the most relevant local businesses to pitch to, with tailored outreach messages for each.
 - **Marketplace UI Polish:** Several improvements to make the marketplace stand out: (1) Hero search bar — bold full-width banner with gradient background and centered search inputs like Airbnb/Yelp. (2) Loading skeleton cards — animated shimmer placeholders in the grid while search is in progress. (3) Result count — show "20 results for Restaurants in Nashville" above the grid after search. (4) Empty website state — show muted "No website listed" instead of hiding the button entirely. (5) Gradient overlay on photos — subtle dark gradient at bottom of card photos so content reads cleanly over the image.
 
+### Known Issues & Tools Built
+
+| Issue | Root Cause | Solution | File |
+|-------|-----------|----------|------|
+| TikTok/Instagram "Copy Link" generates short URLs (e.g. `vm.tiktok.com/ZMxxxxxx/`) that can't be parsed for embed ID | Short URLs redirect to full URLs but the parser needs `/video/` or `/p/` in the path | Built `/api/resolve-url` route — server-side `fetch` with `redirect: "follow"` returns the final URL; called `onBlur` of the featured post URL input | `app/api/resolve-url/route.ts`, `components/ProfileForm.tsx` |
+| New user profile page crashes with `Cannot read properties of null (reading 'toString')` | `total_followers`, `avg_views`, `engagement_rate` are nullable in DB but typed as `number` — `null.toString()` throws at runtime | Added `num == null` guard to `formatNumber` and `formatEngagement` in `FlippableCard.tsx`, returning `"—"` for null values | `app/profile/[username]/FlippableCard.tsx` |
+| Password reset "Auth session missing" error | Recovery token lives in the URL hash — Supabase needs to detect it and establish a session before `updateUser` can work | Added `supabase.auth.onAuthStateChange` listener in a `useEffect` on the reset-password page to pick up the `PASSWORD_RECOVERY` event | `app/reset-password/page.tsx` |
+| Instagram/TikTok password fields show double eye icon in Chrome | Chrome injects its own native password reveal icon on top of our custom one | Added `[&::-ms-reveal]:hidden [&::-webkit-credentials-auto-fill-button]:hidden` to input className to suppress the native icon | `app/login/page.tsx`, `app/reset-password/page.tsx` |
+
 ### Form ↔ DB alignment notes
 - Form `school` → DB `university`
 - Form social `username` → DB `url`

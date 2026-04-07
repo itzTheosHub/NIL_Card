@@ -3,7 +3,7 @@
 import Image from "next/image"
 import { useState, useEffect } from "react"
 import { Eye, Users, TrendingUp, Camera, Video, Package, Calendar, Award, Share2, BadgeCheck,
-     GraduationCap, ExternalLink, ImagePlus, ImagePlay, MessageSquareQuote, Youtube, RotateCcw, Star, Newspaper } from "lucide-react"
+     GraduationCap, ExternalLink, ImagePlus, ImagePlay, MessageSquareQuote, Youtube, RotateCcw, Star, Newspaper, Sparkles } from "lucide-react"
 import ContactSection from "./ContactSection"
 
 function formatNumber(num: number | null): string {
@@ -107,19 +107,19 @@ export default function FlippableCard({ profile, socialLinks, profileContentTags
                                 </h1>
                             </div>
                             <div className="flex items-center justify-center gap-3 mt-1">
-                                <div className="flex-1 max-w-[40px] h-[1px] bg-gradient-to-l from-zinc-600/50 dark:from-violet-400/30 to-transparent" />
+                                <div className="flex-1 max-w-[40px] h-[2px] bg-gradient-to-l from-zinc-600/50 dark:from-violet-400/30 to-transparent" />
                                 <span className="text-sm text-zinc-600 dark:text-violet-400/70 whitespace-nowrap">
                                     {profile.sport} • {profile.division}
                                 </span>
-                                <div className="flex-1 max-w-[40px] h-[1px] bg-gradient-to-r from-zinc-600/50 dark:from-violet-400/30 to-transparent" />
+                                <div className="flex-1 max-w-[40px] h-[2px] bg-gradient-to-r from-zinc-600/50 dark:from-violet-400/30 to-transparent" />
                             </div>
                             <div className="flex items-center justify-center gap-3 mt-1">
-                                <div className="flex-1 max-w-[40px] h-[1px] bg-gradient-to-l from-zinc-600/50 dark:from-violet-400/30 to-transparent" />
+                                <div className="flex-1 max-w-[40px] h-[2px] bg-gradient-to-l from-zinc-600/50 dark:from-violet-400/30 to-transparent" />
                                 <span className="flex items-center gap-1.5 text-sm text-zinc-600 dark:text-violet-400/70 whitespace-nowrap">
                                     <GraduationCap className="w-4 h-4 text-zinc-600 dark:text-violet-400/70" />
                                     {profile.university} &#39;{profile.graduation_year}
                                 </span>
-                                <div className="flex-1 max-w-[40px] h-[1px] bg-gradient-to-r from-zinc-600/50 dark:from-violet-400/30 to-transparent" />
+                                <div className="flex-1 max-w-[40px] h-[2px] bg-gradient-to-r from-zinc-600/50 dark:from-violet-400/30 to-transparent" />
                             </div>
 
                             {/* Stats Grid */}
@@ -150,7 +150,7 @@ export default function FlippableCard({ profile, socialLinks, profileContentTags
                             <div className="space-y-3 mt-4 text-left">
                                 <div className="flex items-center gap-4 mb-3">
                                     <span className="text-base font-semibold text-zinc-700 dark:text-zinc-300 whitespace-nowrap">Social Channels</span>
-                                    <div className="flex-1 h-[1px] bg-gradient-to-r from-purple-500/60 via-purple-400/40 to-transparent" />
+                                    <div className="flex-1 h-[2px] bg-gradient-to-r from-purple-500/60 via-purple-400/40 to-transparent" />
                                 </div>
                                 {socialLinks?.map((link) => {
                                     let containerClass = ""
@@ -235,7 +235,7 @@ export default function FlippableCard({ profile, socialLinks, profileContentTags
                         <div className="px-6 pt-2 pb-6">
                             <div className="flex items-center gap-4 mb-3">
                                 <h2 className="text-base font-semibold text-zinc-700 dark:text-zinc-300 whitespace-nowrap">About</h2>
-                                <div className="flex-1 h-[1px] bg-gradient-to-r from-purple-500/60 via-purple-400/40 to-transparent" />
+                                <div className="flex-1 h-[2px] bg-gradient-to-r from-purple-500/60 via-purple-400/40 to-transparent" />
                             </div>
                             <p className="text-gray-700 leading-relaxed dark:text-zinc-300">{profile.bio}</p>
                             <div className="flex flex-wrap gap-2 mt-4">
@@ -258,7 +258,7 @@ export default function FlippableCard({ profile, socialLinks, profileContentTags
                         <div className="px-6 pt-2 pb-1">
                             <div className="flex items-center gap-4 mb-3">
                                 <h2 className="text-base font-semibold text-zinc-700 dark:text-zinc-300 whitespace-nowrap">Partnership Deliverables</h2>
-                                <div className="flex-1 h-[1px] bg-gradient-to-r from-purple-500/60 via-purple-400/40 to-transparent" />
+                                <div className="flex-1 h-[2px] bg-gradient-to-r from-purple-500/60 via-purple-400/40 to-transparent" />
                             </div>
                             <div className="grid grid-cols-1 gap-2">
                                 {deliverables?.map((deliverable) => {
@@ -286,40 +286,50 @@ export default function FlippableCard({ profile, socialLinks, profileContentTags
                     className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden]"
                     style={{WebkitBackfaceVisibility: "hidden"}}
                 >
-                    <div className="relative overflow-y-auto rounded-2xl bg-white backdrop-blur-sm shadow-lg dark:border dark:border-zinc-700 dark:bg-zinc-900 h-full">
+                    <div className="relative flex flex-col rounded-2xl bg-white backdrop-blur-sm shadow-lg dark:border dark:border-zinc-700 dark:bg-zinc-900 h-full">
                         <button
                             onClick={() => setIsFlipped(false)}
-                            className="group rounded-full absolute top-4 right-4 px-2 py-1 flex items-center gap-2 justify-center bg-white/20 backdrop-blur-sm border border-white/30 hover:bg-white/30 active:bg-white/30 transition-colors"
+                            className="group absolute top-3 right-3 z-10 w-7 h-7 rounded-full flex items-center justify-center bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
                         >
-                            <RotateCcw className="w-4 h-4 group-active:rotate-180 group-hover:rotate-180 transition-transform duration-300" />
-                            <span className="text-xs font-medium">
-                               Flip Card
-                            </span>
+                            <RotateCcw className="w-3.5 h-3.5 group-hover:rotate-180 transition-transform duration-300" />
                         </button>
-                        <div className="px-6 pt-8 pb-6 space-y-6">
+                        <div className="px-6 pt-8 pb-6 space-y-6 flex-1 overflow-y-auto">
 
-                            
+                        {featuredPosts.length === 0 && awards.length === 0 && highlights.length === 0 && pressArticles.length === 0 && (
+                            <div className="flex flex-col items-center justify-center py-16 text-center gap-3">
+                                <div className="w-12 h-12 rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
+                                    <Sparkles className="w-5 h-5 text-violet-400" />
+                                </div>
+                                <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">This athlete hasn't completed the back of their card yet.</p>
+                            </div>
+                        )}
 
-                            {/* Featured Content Section */}
+                        {featuredPosts.length > 0 && (
                             <div>
+                                {/* Featured Content Section */}
                                 <div className="flex items-center gap-4 mb-3">
                                     <Camera className="w-5 h-5 text-purple-600"/>
                                     <span className="text-lg font-bold text-zinc-700 dark:text-zinc-300 whitespace-nowrap">
                                         Featured Content
                                     </span>
+                                    <div className="flex-1 h-[2px] bg-gradient-to-r from-purple-500/60 via-purple-400/40 to-transparent" />
                                 </div>
-                                <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                                    {featuredPosts.map((post) => {
+                                <div className={featuredPosts.length === 1
+                                    ? "w-full"
+                                    : "flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                                }>
+                                    {featuredPosts.slice(0, 3).map((post) => {
+                                        const isSingle = featuredPosts.length === 1
                                         if (post.platform === "instagram") {
                                             const shortcode = post.url.split("/p/")[1]?.split("/")[0]
                                             return (
                                                 <div
                                                     key={post.id}
-                                                    className="snap-start shrink-0 w-[325px] h-[400px] overflow-hidden rounded-xl"
+                                                    className={isSingle ? "w-full h-[400px] overflow-hidden rounded-xl" : "snap-start shrink-0 w-[325px] h-[400px] overflow-hidden rounded-xl"}
                                                 >
                                                     <iframe
                                                         src={`https://www.instagram.com/p/${shortcode}/embed/`}
-                                                        width="325"
+                                                        width={isSingle ? "100%" : "325"}
                                                         height="400"
                                                         className="border-0"
                                                     />
@@ -330,20 +340,20 @@ export default function FlippableCard({ profile, socialLinks, profileContentTags
                                             return (
                                                 <div
                                                     key={post.id}
-                                                    className="snap-start shrink-0 w-[325px] h-[400px] overflow-hidden rounded-xl"
+                                                    className={isSingle ? "w-full h-[400px] overflow-hidden rounded-xl" : "snap-start shrink-0 w-[325px] h-[400px] overflow-hidden rounded-xl"}
                                                 >
                                                     <iframe
                                                         src={`https://www.tiktok.com/embed/v2/${postId}`}
-                                                        width="325"
-                                                        height="600"
+                                                        width={isSingle ? "100%" : "325"}
+                                                        height="400"
                                                     />
                                                 </div>
                                             )
                                         }
                                     })}
-
                                 </div>
                             </div>
+                        )}
 
                             {/* Awards & Honors Section */}
                             {awards.length > 0 && (
@@ -353,10 +363,10 @@ export default function FlippableCard({ profile, socialLinks, profileContentTags
                                         <h2 className="text-lg font-bold text-zinc-700 dark:text-zinc-300 whitespace-nowrap">
                                             Awards & Honors
                                         </h2>
-                                        <div className="flex-1 h-[1px] bg-gradient-to-r from-yellow-500/60 via-purple-400/40 to-transparent"/>
+                                        <div className="flex-1 h-[2px] bg-gradient-to-r from-yellow-500/60 via-purple-400/40 to-transparent"/>
                                     </div>
                                     <div className="grid grid-cols-1 gap-2">
-                                        {awards.map((award) => (
+                                        {awards.slice(0, 3).map((award) => (
                                             <div
                                                 key={award.id}
                                                 className="flex items-center gap-3 p-3 rounded-lg border bg-amber-50 dark:bg-amber-900/10 border-amber-100 dark:border-zinc-700 hover:border-amber-200 transition-colors"
@@ -384,10 +394,10 @@ export default function FlippableCard({ profile, socialLinks, profileContentTags
                                         <h2 className="text-lg font-bold text-zinc-700 dark:text-zinc-300 whitespace-nowrap">
                                             Articles & Press Coverage
                                         </h2>
-                                        <div className="flex-1 h-[1px] bg-gradient-to-r from-blue-500/60 via-purple-400/40 to-transparent" />
+                                        <div className="flex-1 h-[2px] bg-gradient-to-r from-blue-500/60 via-purple-400/40 to-transparent" />
                                     </div>
                                     <div className="grid grid-cols-1 gap-2">
-                                        {pressArticles.map((article) => (
+                                        {pressArticles.slice(0, 3).map((article) => (
                                             <a
                                                 key={article.id}
                                                 href={article.url}
@@ -412,10 +422,10 @@ export default function FlippableCard({ profile, socialLinks, profileContentTags
                                         <h2 className="text-lg font-bold text-zinc-700 dark:text-zinc-300 whitespace-nowrap">
                                             Highlights
                                         </h2>
-                                        <div className="flex-1 h-[1px] bg-gradient-to-r from-green-500/60 via-purple-400/40 to-transparent" />
+                                        <div className="flex-1 h-[2px] bg-gradient-to-r from-green-500/60 via-purple-400/40 to-transparent" />
                                     </div>
                                     <div className="grid grid-cols-1 gap-2">
-                                        {highlights.map((highlight) => (
+                                        {highlights.slice(0, 3).map((highlight) => (
                                             <div
                                                 key={highlight.id}
                                                 className="flex items-center gap-3 p-3 rounded-lg border bg-green-50 dark:bg-green-900/10 border-green-100 dark:border-zinc-700 hover:border-green-200 transition-colors"
@@ -430,7 +440,16 @@ export default function FlippableCard({ profile, socialLinks, profileContentTags
                                 </div>
                             )}
 
+                        </div>
 
+                        <div className="px-6 pb-6">
+                            <button
+                                onClick={() => setIsFlipped(false)}
+                                className="group w-full rounded-full px-2 py-2 flex items-center gap-2 justify-center bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+                            >
+                                <RotateCcw className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
+                                <span className="text-xs font-medium">Flip Card</span>
+                            </button>
                         </div>
 
                     </div>
