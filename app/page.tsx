@@ -7,15 +7,7 @@ import {createClient} from "@/lib/supabase"
 import {ArrowRight, Star} from "lucide-react"
 import NilCardPreview from "@/components/NilCardPreview"
 
-export default function HomePage() {
-
-  const [user, setUser] = useState<any>(null)
-  const [profile, setProfile] = useState<any>(null)
-  const [authLoading, setAuthLoading] = useState(true)
-  const supabase = createClient()
-  const router = useRouter()
-
-  const SAMPLE_BUSINESSES = [
+const SAMPLE_BUSINESSES = [
     {
       name: "Surge Supplements",
       type: "Supplement Store",
@@ -23,7 +15,7 @@ export default function HomePage() {
       rating: 4.7,
       reviews: 400,
       emoji: "💊"
-    }, 
+    },
     {
       name: "Iron & Oak Gym",
       type: "Gym & Fitness",
@@ -47,8 +39,16 @@ export default function HomePage() {
       rating: 3.6,
       reviews: 1987,
       emoji: "👟"
-    } 
-  ]
+    }
+]
+
+export default function HomePage() {
+
+  const [user, setUser] = useState<any>(null)
+  const [profile, setProfile] = useState<any>(null)
+  const [authLoading, setAuthLoading] = useState(true)
+  const supabase = createClient()
+  const router = useRouter()
 
   useEffect(() => {
         async function fetchUser() {
@@ -96,18 +96,19 @@ export default function HomePage() {
               {/* Left: text + CTAs */}
               <div>
                 <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-5xl">
-                  Your NIL Profile,
+                  Stop DMing brands with nothing to show.
                   <br/>
-                  your confident pitch to brands
+                  <span className="bg-gradient-to-r from-violet-600 to-blue-500 bg-clip-text text-transparent">
+                    Send a link that does the talking.
+                  </span>
                 </h1>
                 <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-400 max-w-md">
-                  Create a professional virtual NIL Card to showcase your social reach,
-                  audience, and brand collaboration opportunities. Share it with one simple link.
+                  Local businesses in your city are looking for athletes to partner with. Most athletes never reach out because they don't know how to pitch. NIL Card gives you everything you need in one link.
                 </p>
-                <div className="flex flex-row gap-4 mt-8">
+                <div className="flex flex-col sm:flex-row gap-4 mt-8">
                   {!authLoading && user ? (
                     <Link
-                      href={`/profile/${profile?.username}`}
+                      href={profile?.username ? `/profile/${profile.username}` : "/profile/create"}
                       className="rounded-md bg-gradient-to-r from-violet-600 to-blue-500 hover:from-violet-700 hover:to-blue-600 px-8 py-3 text-base font-medium text-white whitespace-nowrap"
                     >
                       View My Card
@@ -166,53 +167,128 @@ export default function HomePage() {
           <div className="border-t border-zinc-200 dark:border-zinc-800"/>
 
           {/* How It Works Section */}
-          <section className="border-t border-zinc-200 bg-white py-20 px-4 dark:border-zinc-800 dark:bg-zinc-900">
+          <section className="bg-zinc-50 dark:bg-zinc-950 py-20 px-4 border-t border-zinc-200 dark:border-zinc-800">
             <div className="mx-auto max-w-4xl">
               <h2 className="text-center text-3xl font-bold text-zinc-900 dark:text-zinc-100">
                 How It Works
               </h2>
-              <p className="mt-2 text-center text-zinc-600 dark:text-zinc-400">
-                Get your NIL Card in three simple steps
+              <p className="mt-2 text-center text-zinc-500 dark:text-zinc-400">
+                Get your NIL Card up and running in minutes
               </p>
 
-              <div className="mt-12 grid gap-12 sm:grid-cols-3">
+              <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
                 {/* Step 1 */}
-                <div className="text-center rounded-lg p-4 transition hover:bg-zinc-50 dark:hover:bg-zinc-800">
-                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-blue-500 text-xl font-bold text-white shadow-md">
+                <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-6 flex flex-col gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-blue-500 text-base font-bold text-white shadow-md">
                     1
                   </div>
-                  <h3 className="mt-4 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-                    Create Your Profile
+                  <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+                    Build your pitch
                   </h3>
-                  <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-                    Add your bio, stats, social media handles, and upload a photo.
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                    Add your sport, stats, social handles, and a photo. Takes less than 5 minutes.
                   </p>
                 </div>
 
                 {/* Step 2 */}
-                <div className="text-center rounded-lg p-4 transition hover:bg-zinc-50 dark:hover:bg-zinc-800">
-                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-blue-500 text-xl font-bold text-white shadow-md">
+                <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-6 flex flex-col gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-blue-500 text-base font-bold text-white shadow-md">
                     2
                   </div>
-                  <h3 className="mt-4 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-                    Get Your Link
+                  <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+                    Get your link
                   </h3>
-                  <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-                    We generate a unique, shareable link for your NIL Card.
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                    Your card lives at nilcard.app/profile/your-name — one link that shows everything a brand needs to say yes.
                   </p>
                 </div>
 
                 {/* Step 3 */}
-                <div className="text-center rounded-lg p-4 transition hover:bg-zinc-50 dark:hover:bg-zinc-800">
-                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-blue-500 text-xl font-bold text-white shadow-md">
+                <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-6 flex flex-col gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-blue-500 text-base font-bold text-white shadow-md">
                     3
                   </div>
-                  <h3 className="mt-4 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-                    Share With Brands
+                  <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+                    Share with brands
                   </h3>
-                  <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-                    Send your link to brands and sponsors to land NIL deals.
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                    DM it, email it, drop it in your bio. Brands see your reach, your audience, and how to work with you — all in one place.
                   </p>
+                </div>
+
+                {/* Step 4 */}
+                <div className="bg-white dark:bg-zinc-900 border border-violet-200 dark:border-violet-800 rounded-2xl p-6 flex flex-col gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-blue-500 text-base font-bold text-white shadow-md">
+                    4
+                  </div>
+                  <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+                    Get discovered
+                  </h3>
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                    Brands browsing the marketplace find you. The best deals don't always come from who you pitch — sometimes they come to you.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Why Brands Section — Before/After Comparison */}
+          <section className="bg-white dark:bg-zinc-900 py-20 px-4 border-t border-zinc-200 dark:border-zinc-800">
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
+                  NIL partnerships vs. traditional advertising
+                </h2>
+                <p className="mt-2 text-zinc-500 dark:text-zinc-400">
+                  See why local businesses are making the switch.
+                </p>
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-4">
+                {/* NIL */}
+                <div className="bg-white dark:bg-zinc-900 border border-violet-300 dark:border-violet-700 rounded-2xl p-6 shadow-sm">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-violet-500 mb-5">NIL Partnership</p>
+                  <div className="flex flex-col gap-4">
+                    {[
+                      ["Cost", "Sponsor a local athlete with 10K engaged followers for a fraction of ad spend"],
+                      ["Trust", "Fans trust athletes they follow — sponsored content feels like a real recommendation"],
+                      ["Targeting", "Local athletes have local audiences — your ad reaches people who can actually walk in"],
+                      ["Longevity", "Athletes become brand ambassadors — posting organically long after the deal is signed"],
+                    ].map(([label, desc]) => (
+                      <div key={label} className="flex gap-3">
+                        <span className="mt-0.5 flex-shrink-0 w-4 h-4 rounded-full bg-violet-100 dark:bg-violet-950 flex items-center justify-center">
+                          <span className="block w-1.5 h-1.5 rounded-full bg-violet-500" />
+                        </span>
+                        <div>
+                          <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">{label}</p>
+                          <p className="text-xs text-zinc-400 mt-0.5">{desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Traditional */}
+                <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-6">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400 mb-5">Traditional Advertising</p>
+                  <div className="flex flex-col gap-4">
+                    {[
+                      ["Cost", "Rising CPMs on Google, Meta & TikTok — paying more for less reach every year"],
+                      ["Trust", "Audiences tune out banner ads and skip pre-rolls within seconds"],
+                      ["Targeting", "Broad demographics — no guarantee your audience is local or relevant"],
+                      ["Longevity", "Stops working the moment you stop paying"],
+                    ].map(([label, desc]) => (
+                      <div key={label} className="flex gap-3">
+                        <span className="mt-0.5 flex-shrink-0 w-4 h-4 rounded-full bg-red-100 dark:bg-red-950 flex items-center justify-center">
+                          <span className="block w-1.5 h-1.5 rounded-full bg-red-400" />
+                        </span>
+                        <div>
+                          <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">{label}</p>
+                          <p className="text-xs text-zinc-400 mt-0.5">{desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -283,10 +359,23 @@ export default function HomePage() {
 
             </div>
           </section>
+          {/* Bottom CTA */}
+          <section className="bg-gradient-to-r from-violet-600 to-blue-500 py-20 px-4">
+            <div className="max-w-2xl mx-auto text-center">
+              <h2 className="text-3xl font-bold text-white">
+                Ready to land your first deal?
+              </h2>
+              <p className="mt-3 text-violet-100 text-lg">
+                Create your free NIL Card in minutes and start pitching brands with confidence.
+              </p>
+              <Link
+                href="/signup"
+                className="inline-block mt-8 px-8 py-4 bg-white text-violet-600 font-semibold rounded-xl hover:bg-violet-50 transition-colors text-base"
+              >
+                Create my free card →
+              </Link>
+            </div>
+          </section>
         </div>
-      
-      
-      
-        
   )
   }

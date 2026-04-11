@@ -334,7 +334,7 @@ export default function EditProfilePage({initialFormData, initialSocialLinks, in
                       />
                       {formData.username && (
                         <p className="text-xs text-zinc-500">
-                          Your profile URL: nilcardcbv.vercel.app/profile/{formData.username}
+                          Your profile URL: nilcard.vercel.app/profile/{formData.username}
                         </p>
                       )}
                     </div>
@@ -769,9 +769,12 @@ export default function EditProfilePage({initialFormData, initialSocialLinks, in
                           placeholder="Paste post URL"
                           value={post.url}
                           onChange={(e) => {
-                            const updated = [...featuredPosts]
-                            updated[index].url = e.target.value
-                            setFeaturedPosts(updated)
+                            const val = e.target.value
+                            setFeaturedPosts(prev => {
+                              const updated = [...prev]
+                              updated[index] = { ...updated[index], url: val }
+                              return updated
+                            })
                           }}
                           onBlur={async (e) => {
                             const url = e.target.value
@@ -780,9 +783,11 @@ export default function EditProfilePage({initialFormData, initialSocialLinks, in
                               const res = await fetch(`/api/resolve-url?url=${encodeURIComponent(url)}`)
                               const data = await res.json()
                               if (data.resolvedUrl) {
-                                const updated = [...featuredPosts]
-                                updated[index].url = data.resolvedUrl
-                                setFeaturedPosts(updated)
+                                setFeaturedPosts(prev => {
+                                  const updated = [...prev]
+                                  updated[index] = { ...updated[index], url: data.resolvedUrl }
+                                  return updated
+                                })
                               }
                             } catch {}
                           }}
@@ -793,9 +798,11 @@ export default function EditProfilePage({initialFormData, initialSocialLinks, in
                               key={platform}
                               type="button"
                               onClick={() => {
-                                const updated = [...featuredPosts]
-                                updated[index].platform = platform
-                                setFeaturedPosts(updated)
+                                setFeaturedPosts(prev => {
+                                  const updated = [...prev]
+                                  updated[index] = { ...updated[index], platform }
+                                  return updated
+                                })
                               }}
                               className={`flex-1 py-1.5 rounded-full text-sm font-medium transition-all capitalize ${
                                 post.platform === platform
@@ -834,17 +841,23 @@ export default function EditProfilePage({initialFormData, initialSocialLinks, in
                           placeholder="Title (e.g. All-Conference 2025)"
                           value={award.title}
                           onChange={(e) => {
-                            const updated = [...awards]
-                            updated[index].title = e.target.value
-                            setAwards(updated)
+                            const val = e.target.value
+                            setAwards(prev => {
+                              const updated = [...prev]
+                              updated[index] = { ...updated[index], title: val }
+                              return updated
+                            })
                           }} />
                         <Input
                           placeholder="Description"
                           value={award.description}
                           onChange={(e) => {
-                            const updated = [...awards]
-                            updated[index].description = e.target.value
-                            setAwards(updated)
+                            const val = e.target.value
+                            setAwards(prev => {
+                              const updated = [...prev]
+                              updated[index] = { ...updated[index], description: val }
+                              return updated
+                            })
                           }} />
                         <Button
                           type="button"
@@ -881,17 +894,23 @@ export default function EditProfilePage({initialFormData, initialSocialLinks, in
                           placeholder="Title (e.g. 1,000 career points)"
                           value={highlight.title}
                           onChange={(e) => {
-                            const updated = [...highlights]
-                            updated[index].title = e.target.value
-                            setHighlights(updated)
+                            const val = e.target.value
+                            setHighlights(prev => {
+                              const updated = [...prev]
+                              updated[index] = { ...updated[index], title: val }
+                              return updated
+                            })
                           }} />
                         <Input
                           placeholder="Description"
                           value={highlight.description}
                           onChange={(e) => {
-                            const updated = [...highlights]
-                            updated[index].description = e.target.value
-                            setHighlights(updated)
+                            const val = e.target.value
+                            setHighlights(prev => {
+                              const updated = [...prev]
+                              updated[index] = { ...updated[index], description: val }
+                              return updated
+                            })
                           }} />
                         <Button
                           type="button"
@@ -927,17 +946,23 @@ export default function EditProfilePage({initialFormData, initialSocialLinks, in
                           placeholder="Title (e.g. All-American Team)"
                           value={article.title}
                           onChange={(e) => {
-                            const updated = [...pressArticles]
-                            updated[index].title = e.target.value
-                            setPressArticles(updated)
+                            const val = e.target.value
+                            setPressArticles(prev => {
+                              const updated = [...prev]
+                              updated[index] = { ...updated[index], title: val }
+                              return updated
+                            })
                           }} />
                         <Input
                           placeholder="url"
                           value={article.url}
                           onChange={(e) => {
-                            const updated = [...pressArticles]
-                            updated[index].url = e.target.value
-                            setPressArticles(updated)
+                            const val = e.target.value
+                            setPressArticles(prev => {
+                              const updated = [...prev]
+                              updated[index] = { ...updated[index], url: val }
+                              return updated
+                            })
                           }} />
                         <Button
                           type="button"

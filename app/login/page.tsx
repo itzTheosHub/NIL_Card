@@ -30,7 +30,7 @@ export default function LoginPage() {
             setError(error.message)
         } else {
             const { data: profile } = await supabase.from("profiles").select("id, username").eq("id", data.user.id).single()
-            if (profile) {
+            if (profile?.username) {
                 router.push(`/profile/${profile.username}`)
             } else {
                 router.push("/profile/create")
