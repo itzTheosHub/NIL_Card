@@ -1,6 +1,6 @@
 // lib/phyllo-api.ts
 
-const PHYLLO_BASE_URL = process.env.NODE_ENV === "production"
+const PHYLLO_BASE_URL = process.env.PHYLLO_ENV === "production"
   ? "https://api.getphyllo.com"
   : "https://api.staging.getphyllo.com"
 
