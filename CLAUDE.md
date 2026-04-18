@@ -9,7 +9,7 @@ See `docs/SESSION_LOG.md` for session history.
 
 **Status:** In Progress
 
-**Next up:** Build `/athletes` directory page, then Contact Info tab for marketplace modal.
+**Next up:** `npm install phyllo-connect`, add `NEXT_PUBLIC_PHYLLO_ENVIRONMENT=staging` to `.env.local`, run `npm run validate 5`, then integrate `PhylloConnectSection` into `ProfileForm.tsx`.
 
 ---
 

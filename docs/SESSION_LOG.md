@@ -2,6 +2,35 @@
 
 ---
 
+**2026-04-16**
+- Fixed `create-user/route.ts`: updated import from `@/lib/supabase` (browser client) → `@/lib/supabase-server`, added `await` to `createClient()` call
+- Confirmed `lib/supabase-server.ts` was already created by implement agent (uses `createServerClient` from `@supabase/ssr`, reads cookies via `next/headers`)
+- Removed `work_platform_ids` hallucination from `create-user/route.ts` (re-introduced by implement agent re-run)
+- Fixed PII leak: changed `name: user.email` → `name: \`user-${user.id}\`` in create-user Phyllo payload
+- Added `PHYLLO_ENV=staging` to `.env.local`
+- Increased implement agent `max_tokens` from 4096 → 8096 (was truncating output for large steps)
+- Added constraints section to `step-5-plan.md` to guide implement agent: keep `lib/phyllo.ts` server-only, skip polling, note new env var
+- Step 5 implemented: `lib/phyllo-client.ts`, `hooks/usePhylloConnect.ts`, `components/PhylloConnectSection.tsx`
+- **Next up:** `npm install phyllo-connect`, add `NEXT_PUBLIC_PHYLLO_ENVIRONMENT=staging` to `.env.local`, run `npm run validate 5`, then manually integrate `PhylloConnectSection` into `ProfileForm.tsx`
+
+---
+
+**2026-04-13**
+- Built 4 AI agents for spec-driven feature development: `scripts/agents/spec-to-code.ts`, `implement.ts`, `validate.ts`, `feature-status.ts`
+- Added `spec-to-code`, `implement`, `validate`, `feature-status` scripts to `package.json`
+- Created `docs/PRD-phyllo-connect.md` — full product requirements for Phyllo social connect feature
+- Created `supabase/phyllo-migration.sql` — DB migration for `profile_social_stats` table and new `profiles` columns
+- Ran migration in Supabase — `profile_social_stats` table created, audience columns added to `profiles`
+- Added `PHYLLO_CLIENT_ID`, `PHYLLO_SECRET`, `PHYLLO_BASE_URL` to `.env.local` (sandbox mode)
+- Ran `spec-to-code 3` → `implement 3` → `validate 3` for `/api/phyllo/create-user` route
+- Created `lib/phyllo.ts` — shared Phyllo auth header + base URL helper
+- Created `app/api/phyllo/create-user/route.ts` — idempotent, auth-gated, saves phyllo_user_id to profiles
+- Fixed agent hallucination: removed `work_platform_ids` from create-user payload (not in Phyllo API spec)
+- Confirmed: `products` array goes in SDK token call (step 4), not create-user call
+- **Next up:** `npm run spec-to-code 4` — create-token route
+
+---
+
 **2026-04-08**
 - Built AI review agents: `scripts/review.ts`, `scripts/mobile-check.ts`, `scripts/run-all.ts`
 - Installed `@anthropic-ai/sdk`, `dotenv`, `tsx` dev dependencies

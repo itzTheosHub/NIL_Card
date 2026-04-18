@@ -9,7 +9,11 @@
     "lint": "eslint",
     "review": "tsx scripts/review.ts",
     "mobile-check": "tsx scripts/mobile-check.ts",
-    "check-all": "tsx scripts/run-all.ts"
+    "check-all": "tsx scripts/run-all.ts",
+    "spec-to-code": "tsx scripts/agents/spec-to-code.ts",
+    "implement": "tsx scripts/agents/implement.ts",
+    "validate": "tsx scripts/agents/validate.ts",
+    "feature-status": "tsx scripts/agents/feature-status.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.85.0",

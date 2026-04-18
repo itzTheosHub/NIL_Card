@@ -115,7 +115,7 @@ Give athletes the stats that actually close deals with local businesses. Busines
 
 - **AI Outreach Assistant** — when athletes view their own profile, provide AI-generated DM/message suggestions for reaching out to brands (tone, structure, personalization tips).
 
-- **Platform API Integration (Stats Automation)** — connect to Instagram and TikTok APIs via OAuth to auto-calculate engagement rate and avg views. Requires platform API approval — defer to Phase 13+.
+- **Platform Stats Automation (Phyllo → Meta API)** — use Phyllo (phyllo.io) as the first integration layer for Instagram + TikTok stats (followers, views, engagement, posts). Phyllo handles OAuth and data normalization across platforms — just call their API. Once traction justifies it, migrate to Meta's Graph API directly and swap out Phyllo calls without touching the frontend. Phyllo is purpose-built for NIL/creator economy apps.
 
 - **Landing Page Redesign** — better hero section, social proof, feature highlights, two-pathway CTAs (For Athletes / For Brands). User will provide layout direction when ready.
 
