@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
       .from("profiles")
       .select("phyllo_user_id")
       .eq("id", user.id)
-      .single()
+      .maybeSingle()
 
     if (profileError || !profile?.phyllo_user_id) {
       return NextResponse.json(
@@ -93,13 +93,11 @@ export async function POST(request: NextRequest) {
       const accounts = accountsData.data
 
       if (!accounts || accounts.length === 0) {
-        // No account found on Phyllo side — just update our DB
-        const connectedColumn = platform === "instagram" ? "instagram_connected" : "tiktok_connected"
-
         await supabase
-          .from("profiles")
-          .update({ [connectedColumn]: false })
-          .eq("id", user.id)
+          .from("profile_social_stats")
+          .update({ connected: false })
+          .eq("profile_id", user.id)
+          .eq("platform", platform)
 
         return NextResponse.json({
           success: true,
@@ -127,8 +125,17 @@ export async function POST(request: NextRequest) {
       const errBody = await disconnectRes.text()
       console.error("Phyllo disconnect failed:", disconnectRes.status, errBody)
 
-      // If 404, the account was already removed on Phyllo's side — still update our DB
-      if (disconnectRes.status !== 404) {
+      // Treat 404 or account_disconnected as "already gone on Phyllo's side" — still update our DB
+      let alreadyDisconnected = disconnectRes.status === 404
+      if (!alreadyDisconnected) {
+        try {
+          const errJson = JSON.parse(errBody)
+          alreadyDisconnected =
+            errJson?.error?.code === "account_disconnected" ||
+            errJson?.error?.error_code === "account_disconnected"
+        } catch {}
+      }
+      if (!alreadyDisconnected) {
         return NextResponse.json(
           { error: "Failed to disconnect account on Phyllo." },
           { status: 502 }
@@ -136,18 +143,17 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 6. Update our DB: set the platform's connected flag to false
-    const connectedColumn = platform === "instagram" ? "instagram_connected" : "tiktok_connected"
-
+    // 6. Update our DB: set connected=false in profile_social_stats
     const { error: updateError } = await supabase
-      .from("profiles")
-      .update({ [connectedColumn]: false })
-      .eq("id", user.id)
+      .from("profile_social_stats")
+      .update({ connected: false })
+      .eq("profile_id", user.id)
+      .eq("platform", platform)
 
     if (updateError) {
-      console.error("Failed to update profile after disconnect:", updateError)
+      console.error("Failed to update profile_social_stats after disconnect:", updateError)
       return NextResponse.json(
-        { error: "Disconnected on Phyllo but failed to update profile." },
+        { error: "Disconnected on Phyllo but failed to update stats." },
         { status: 500 }
       )
     }

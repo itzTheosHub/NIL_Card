@@ -27,6 +27,12 @@ export async function GET(request: NextRequest) {
     )
   }
 
+  const { data: handles } = await supabase
+    .from("profiles")
+    .select("instagram_handle, tiktok_handle")
+    .eq("id", user.id)
+    .maybeSingle()
+
   const igRow = statsRows?.find((r) => r.platform === "instagram") ?? null
   const ttRow = statsRows?.find((r) => r.platform === "tiktok") ?? null
 
@@ -36,12 +42,12 @@ export async function GET(request: NextRequest) {
     instagram_avg_views: igRow?.avg_views ?? null,
     instagram_engagement_rate: igRow?.engagement_rate ?? null,
     instagram_total_posts: igRow?.total_posts ?? null,
-    instagram_username: null,
+    instagram_username: handles?.instagram_handle ?? null,
     tiktok_connected: ttRow?.connected ?? false,
     tiktok_followers: ttRow?.followers ?? null,
     tiktok_avg_views: ttRow?.avg_views ?? null,
     tiktok_engagement_rate: ttRow?.engagement_rate ?? null,
     tiktok_total_posts: ttRow?.total_posts ?? null,
-    tiktok_username: null,
+    tiktok_username: handles?.tiktok_handle ?? null,
   })
 }
