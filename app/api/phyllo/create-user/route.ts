@@ -57,6 +57,29 @@ export async function POST(request: NextRequest) {
     if (!phylloResponse.ok) {
       const errorBody = await phylloResponse.text()
       console.error("Phyllo create-user error:", phylloResponse.status, errorBody)
+
+      // If user already exists in Phyllo, fetch them by external_id instead
+      let parsedError: any = {}
+      try { parsedError = JSON.parse(errorBody) } catch {}
+      const errorCode = parsedError?.error?.code ?? parsedError?.error?.error_code ?? ""
+
+      if (errorCode === "user_exists_with_external_id") {
+        const lookupRes = await fetch(
+          `${phylloBaseUrl}/v1/users?external_id=${user.id}`,
+          { headers: { Authorization: authHeader, "Content-Type": "application/json" } }
+        )
+        if (lookupRes.ok) {
+          const lookupData = await lookupRes.json()
+          const existingId: string = lookupData?.data?.[0]?.id
+          if (existingId) {
+            if (profile !== null) {
+              await supabase.from("profiles").update({ phyllo_user_id: existingId }).eq("id", user.id)
+            }
+            return NextResponse.json({ phyllo_user_id: existingId, existing: true })
+          }
+        }
+      }
+
       return NextResponse.json(
         { error: "Failed to create Phyllo user", detail: errorBody },
         { status: phylloResponse.status }
