@@ -25,6 +25,11 @@ export const PHYLLO_PLATFORM_IDS = {
 
 export type PhylloPlatform = keyof typeof PHYLLO_PLATFORM_IDS
 
+export const PHYLLO_PLATFORMS: { id: PhylloPlatform; label: string; workPlatformId: string }[] = [
+  { id: "instagram", label: "Instagram", workPlatformId: PHYLLO_PLATFORM_IDS.instagram },
+  { id: "tiktok", label: "TikTok", workPlatformId: PHYLLO_PLATFORM_IDS.tiktok },
+]
+
 export function getPhylloEnvironment(): "sandbox" | "staging" | "production" {
   const env = process.env.NEXT_PUBLIC_PHYLLO_ENVIRONMENT
   if (env === "production") return "production"
@@ -91,4 +96,79 @@ export async function openPhylloConnect(
   phylloConnect.open()
 
   return phylloConnect
+}
+
+// ---- API helper functions ----
+
+/**
+ * Creates a Phyllo user (or retrieves existing) for the current athlete.
+ * Returns the phyllo_user_id.
+ */
+export async function createPhylloUser(): Promise<string> {
+  const res = await fetch("/api/phyllo/create-user", { method: "POST" })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}))
+    throw new Error(body.error || "Failed to create Phyllo user")
+  }
+  const data = await res.json()
+  return data.phyllo_user_id
+}
+
+/**
+ * Creates a short-lived SDK token for opening the Phyllo Connect modal.
+ */
+export async function createPhylloToken(phylloUserId: string): Promise<string> {
+  const res = await fetch("/api/phyllo/create-token", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ phyllo_user_id: phylloUserId }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}))
+    throw new Error(body.error || "Failed to create Phyllo token")
+  }
+  const data = await res.json()
+  return data.sdk_token
+}
+
+/**
+ * Disconnects a platform from the athlete's Phyllo account.
+ */
+export async function disconnectPhylloPlatform(platform: PhylloPlatform): Promise<void> {
+  const res = await fetch("/api/phyllo/disconnect", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ platform }),
+  })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}))
+    throw new Error(body.error || "Failed to disconnect platform")
+  }
+}
+
+export type PhylloStatsResponse = {
+  instagram_connected: boolean
+  tiktok_connected: boolean
+  instagram_followers: number | null
+  tiktok_followers: number | null
+  instagram_avg_views: number | null
+  tiktok_avg_views: number | null
+  instagram_engagement_rate: number | null
+  tiktok_engagement_rate: number | null
+  instagram_total_posts: number | null
+  tiktok_total_posts: number | null
+  instagram_username: string | null
+  tiktok_username: string | null
+}
+
+/**
+ * Fetches the current user's per-platform Phyllo stats from our DB.
+ */
+export async function fetchPhylloStats(): Promise<PhylloStatsResponse> {
+  const res = await fetch("/api/phyllo/stats")
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}))
+    throw new Error(body.error || "Failed to fetch Phyllo stats")
+  }
+  return res.json()
 }

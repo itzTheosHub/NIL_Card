@@ -1,11 +1,14 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 import {
   openPhylloConnect,
   PHYLLO_PLATFORM_IDS,
   getPhylloEnvironment,
+  fetchPhylloStats,
+  disconnectPhylloPlatform as apiDisconnectPlatform,
   type PhylloPlatform,
+  type PhylloStatsResponse,
 } from "@/lib/phyllo-client"
 
 export type PhylloConnectionState = {
@@ -34,6 +37,10 @@ type UsePhylloConnectOptions = {
 }
 
 export function usePhylloConnect(options: UsePhylloConnectOptions = {}) {
+  const optionsRef = useRef(options)
+  optionsRef.current = options
+
+  const [initialLoading, setInitialLoading] = useState(true)
   const [connectionState, setConnectionState] = useState<PhylloConnectionState>({
     instagram: "idle",
     tiktok: "idle",
@@ -47,6 +54,99 @@ export function usePhylloConnect(options: UsePhylloConnectOptions = {}) {
     tiktok: null,
   })
   const [phylloUserId, setPhylloUserId] = useState<string | null>(null)
+
+  // Parse the stats API response into per-platform PhylloStats
+  const parseStatsResponse = useCallback(
+    (data: PhylloStatsResponse): { instagram: PhylloStats; tiktok: PhylloStats } => {
+      const igStats: PhylloStats = {
+        followers: data.instagram_followers,
+        avgViews: data.instagram_avg_views,
+        engagementRate: data.instagram_engagement_rate,
+        totalPosts: data.instagram_total_posts,
+        username: data.instagram_username,
+      }
+
+      const tkStats: PhylloStats = {
+        followers: data.tiktok_followers,
+        avgViews: data.tiktok_avg_views,
+        engagementRate: data.tiktok_engagement_rate,
+        totalPosts: data.tiktok_total_posts,
+        username: data.tiktok_username,
+      }
+
+      // Update connection state based on what the DB says
+      setConnectionState((prev) => ({
+        ...prev,
+        instagram: data.instagram_connected ? "connected" : prev.instagram === "connecting" ? "connecting" : "idle",
+        tiktok: data.tiktok_connected ? "connected" : prev.tiktok === "connecting" ? "connecting" : "idle",
+      }))
+
+      // Update stats for connected platforms
+      setPlatformStats((prev) => ({
+        ...prev,
+        instagram: data.instagram_connected ? igStats : prev.instagram,
+        tiktok: data.tiktok_connected ? tkStats : prev.tiktok,
+      }))
+
+      return { instagram: igStats, tiktok: tkStats }
+    },
+    []
+  )
+
+  // Load initial state from DB on mount
+  useEffect(() => {
+    let cancelled = false
+    async function load() {
+      try {
+        const data = await fetchPhylloStats()
+        if (!cancelled) {
+          parseStatsResponse(data)
+        }
+      } catch {
+        // User might not have a profile yet — that's fine
+      } finally {
+        if (!cancelled) setInitialLoading(false)
+      }
+    }
+    load()
+    return () => {
+      cancelled = true
+    }
+  }, [parseStatsResponse])
+
+  // Poll for stats after connecting — Phyllo webhook may take a few seconds
+  const pollForStats = useCallback(
+    async (platform: PhylloPlatform, maxAttempts = 5) => {
+      for (let attempt = 0; attempt < maxAttempts; attempt++) {
+        await new Promise((r) => setTimeout(r, 2000))
+
+        try {
+          const data = await fetchPhylloStats()
+          const connectedKey = `${platform}_connected` as keyof PhylloStatsResponse
+          if (data[connectedKey]) {
+            const parsed = parseStatsResponse(data)
+            const stats = parsed[platform]
+
+            // Fire the callback so ProfileForm can auto-populate fields
+            if (optionsRef.current?.onStatsReceived) {
+              optionsRef.current.onStatsReceived(platform, stats)
+            }
+            return
+          }
+        } catch {
+          // Keep polling
+        }
+      }
+
+      // If we exhausted all attempts, show a helpful message
+      setErrors((prev) => ({
+        ...prev,
+        [platform]:
+          "We couldn't pull your stats. This can happen if:\n• Your account is set to private\n• The platform is temporarily down\n\nTry Again or enter your stats manually below.",
+      }))
+    },
+    [parseStatsResponse]
+  )
 
   const connectPlatform = useCallback(
     async (platform: PhylloPlatform) => {
@@ -93,14 +193,15 @@ export function usePhylloConnect(options: UsePhylloConnectOptions = {}) {
           },
           {
             onAccountConnected: (_accountId, _workPlatformId, _userId) => {
-              // Simply mark as connected — polling for stats will be added later
               setConnectionState((prev) => ({ ...prev, [platform]: "connected" }))
-              options.onConnected?.(platform, _accountId)
+              optionsRef.current?.onConnected?.(platform, _accountId)
+              // Start polling for stats — webhook will populate the DB within a few seconds
+              pollForStats(platform)
             },
             onAccountDisconnected: (_accountId, _workPlatformId, _userId) => {
               setConnectionState((prev) => ({ ...prev, [platform]: "idle" }))
               setPlatformStats((prev) => ({ ...prev, [platform]: null }))
-              options.onDisconnected?.(platform)
+              optionsRef.current?.onDisconnected?.(platform)
             },
             onTokenExpired: (_userId) => {
               setConnectionState((prev) => ({ ...prev, [platform]: "error" }))
@@ -122,7 +223,7 @@ export function usePhylloConnect(options: UsePhylloConnectOptions = {}) {
                 ...prev,
                 [platform]: reason || "Connection failed. Please try again.",
               }))
-              options.onError?.(platform, reason)
+              optionsRef.current?.onError?.(platform, reason)
             },
           }
         )
@@ -130,36 +231,48 @@ export function usePhylloConnect(options: UsePhylloConnectOptions = {}) {
         const message = err instanceof Error ? err.message : "Unknown error"
         setConnectionState((prev) => ({ ...prev, [platform]: "error" }))
         setErrors((prev) => ({ ...prev, [platform]: message }))
-        options.onError?.(platform, message)
+        optionsRef.current?.onError?.(platform, message)
       }
     },
-    [options]
+    [pollForStats]
+  )
+
+  // Refresh stats for an already-connected platform
+  const refreshPlatform = useCallback(
+    async (platform: PhylloPlatform) => {
+      setErrors((prev) => ({ ...prev, [platform]: null }))
+
+      try {
+        const data = await fetchPhylloStats()
+        const parsed = parseStatsResponse(data)
+        const stats = parsed[platform]
+
+        if (optionsRef.current?.onStatsReceived) {
+          optionsRef.current.onStatsReceived(platform, stats)
+        }
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Failed to refresh stats"
+        setErrors((prev) => ({ ...prev, [platform]: message }))
+      }
+    },
+    [parseStatsResponse]
   )
 
   const disconnectPlatform = useCallback(
     async (platform: PhylloPlatform) => {
       try {
-        const res = await fetch("/api/phyllo/disconnect", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ platform }),
-        })
-
-        if (!res.ok) {
-          const errData = await res.json()
-          throw new Error(errData.error || "Failed to disconnect")
-        }
+        await apiDisconnectPlatform(platform)
 
         setConnectionState((prev) => ({ ...prev, [platform]: "idle" }))
         setPlatformStats((prev) => ({ ...prev, [platform]: null }))
         setErrors((prev) => ({ ...prev, [platform]: null }))
-        options.onDisconnected?.(platform)
+        optionsRef.current?.onDisconnected?.(platform)
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : "Unknown error"
         setErrors((prev) => ({ ...prev, [platform]: message }))
       }
     },
-    [options]
+    []
   )
 
   return {
@@ -167,7 +280,9 @@ export function usePhylloConnect(options: UsePhylloConnectOptions = {}) {
     platformStats,
     errors,
     phylloUserId,
+    initialLoading,
     connectPlatform,
+    refreshPlatform,
     disconnectPlatform,
     setConnectionState,
     setPlatformStats,

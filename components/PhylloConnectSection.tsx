@@ -1,6 +1,6 @@
 "use client"
 
-import { Check, Loader2, AlertCircle, Instagram } from "lucide-react"
+import { Check, Loader2, AlertCircle, Instagram, RefreshCw, Unplug } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   usePhylloConnect,
@@ -9,7 +9,7 @@ import {
   type PhylloStats,
 } from "@/hooks/usePhylloConnect"
 import type { PhylloPlatform } from "@/lib/phyllo-client"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 // TikTok icon (lucide doesn't have one)
 function TikTokIcon({ className }: { className?: string }) {
@@ -57,7 +57,9 @@ export default function PhylloConnectSection({
     connectionState,
     platformStats,
     errors,
+    initialLoading,
     connectPlatform,
+    refreshPlatform,
     disconnectPlatform,
     setConnectionState,
     setPlatformStats,
@@ -67,7 +69,9 @@ export default function PhylloConnectSection({
     onConnected,
   })
 
-  // Apply initial states on mount
+  const [refreshingPlatform, setRefreshingPlatform] = useState<PhylloPlatform | null>(null)
+
+  // Apply initial states on mount (from parent, e.g. server-loaded data)
   useEffect(() => {
     if (initialConnectionState) {
       setConnectionState((prev) => ({ ...prev, ...initialConnectionState }))
@@ -78,6 +82,34 @@ export default function PhylloConnectSection({
     // Only run on mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const handleRefresh = async (platform: PhylloPlatform) => {
+    setRefreshingPlatform(platform)
+    try {
+      await refreshPlatform(platform)
+    } finally {
+      setRefreshingPlatform(null)
+    }
+  }
+
+  if (initialLoading) {
+    return (
+      <div className="space-y-4">
+        <div>
+          <h3 className="text-sm font-medium text-gray-700 mb-1">
+            Connect Your Social Accounts
+          </h3>
+          <p className="text-xs text-gray-500">
+            Link your accounts to automatically verify your follower counts and engagement stats.
+          </p>
+        </div>
+        <div className="flex items-center justify-center py-6">
+          <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+          <span className="ml-2 text-sm text-gray-500">Loading connections…</span>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-4">
@@ -95,32 +127,53 @@ export default function PhylloConnectSection({
           const state = connectionState[key]
           const stats = platformStats[key]
           const error = errors[key]
+          const isRefreshing = refreshingPlatform === key
 
           return (
             <div
               key={key}
-              className="flex items-center justify-between rounded-lg border border-gray-200 p-3"
+              className={`flex items-center justify-between rounded-lg border p-3 ${
+                state === "connected"
+                  ? "border-green-200 bg-green-50/50"
+                  : "border-gray-200"
+              }`}
             >
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-600">
+                <div
+                  className={`flex h-10 w-10 items-center justify-center rounded-full ${
+                    state === "connected"
+                      ? "bg-green-100 text-green-600"
+                      : "bg-gray-100 text-gray-600"
+                  }`}
+                >
                   {icon}
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">{label}</p>
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-sm font-medium text-gray-900">{label}</p>
+                    {state === "connected" && (
+                      <Check className="h-4 w-4 text-green-600" />
+                    )}
+                  </div>
                   {state === "connected" && stats?.username && (
                     <p className="text-xs text-gray-500">@{stats.username}</p>
                   )}
                   {state === "connected" && stats?.followers != null && (
                     <p className="text-xs text-gray-500">
                       {stats.followers.toLocaleString()} followers
+                      {stats.engagementRate != null && (
+                        <span className="ml-2">
+                          · {(stats.engagementRate * 100).toFixed(1)}% engagement
+                        </span>
+                      )}
                     </p>
                   )}
                   {state === "connected" && !stats && (
-                    <p className="text-xs text-green-600">Connected</p>
+                    <p className="text-xs text-green-600">Connected — loading stats…</p>
                   )}
                   {error && (
-                    <p className="flex items-center gap-1 text-xs text-red-500">
-                      <AlertCircle className="h-3 w-3" />
+                    <p className="flex items-center gap-1 text-xs text-red-500 mt-0.5">
+                      <AlertCircle className="h-3 w-3 flex-shrink-0" />
                       {error}
                     </p>
                   )}
@@ -143,19 +196,31 @@ export default function PhylloConnectSection({
                     Connecting
                   </Button>
                 ) : state === "connected" ? (
-                  <div className="flex items-center gap-2">
-                    <span className="flex items-center gap-1 text-xs font-medium text-green-600">
-                      <Check className="h-4 w-4" />
-                      Connected
-                    </span>
+                  <div className="flex items-center gap-1">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="text-xs text-gray-500 hover:text-gray-700"
+                      onClick={() => handleRefresh(key)}
+                      disabled={isRefreshing}
+                      title="Refresh stats"
+                    >
+                      <RefreshCw
+                        className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`}
+                      />
+                      <span className="ml-1">Refresh</span>
+                    </Button>
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
                       className="text-xs text-gray-400 hover:text-red-500"
                       onClick={() => disconnectPlatform(key)}
+                      title="Disconnect"
                     >
-                      Disconnect
+                      <Unplug className="h-3.5 w-3.5" />
+                      <span className="ml-1">Disconnect</span>
                     </Button>
                   </div>
                 ) : null}
