@@ -31,6 +31,7 @@ type PhylloConnectSectionProps = {
   onStatsReceived?: (platform: PhylloPlatform, stats: PhylloStats) => void
   onDisconnected?: (platform: PhylloPlatform) => void
   onConnected?: (platform: PhylloPlatform, accountId: string) => void
+  onPhylloUserIdReady?: (id: string) => void
 }
 
 const PLATFORMS: { key: PhylloPlatform; label: string; icon: React.ReactNode }[] = [
@@ -52,6 +53,7 @@ export default function PhylloConnectSection({
   onStatsReceived,
   onDisconnected,
   onConnected,
+  onPhylloUserIdReady,
 }: PhylloConnectSectionProps) {
   const {
     connectionState,
@@ -67,7 +69,8 @@ export default function PhylloConnectSection({
     onStatsReceived,
     onDisconnected,
     onConnected,
-  })
+    onPhylloUserIdReady,
+    })
 
   const [refreshingPlatform, setRefreshingPlatform] = useState<PhylloPlatform | null>(null)
 

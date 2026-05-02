@@ -179,6 +179,9 @@ PHYLLO_SECRET=
 6. ✅ Build `/api/phyllo/webhook` route
 7. ✅ Build `/api/phyllo/disconnect` route
 8. ✅ Wire up connected state UI (checkmark, refresh, disconnect)
-9. Build `GET /api/phyllo/stats` route — queries `profile_social_stats` for the current auth user, returns per-platform stats; used by the frontend to poll for stats after the SDK connect callback fires
-10. Add polling loop in `usePhylloConnect.ts` `onAccountConnected` — after marking state as connected, poll `/api/phyllo/stats` every 2s up to 5 retries until the platform's stats appear, then call `options.onStatsReceived`
-11. Test end-to-end on staging
+9. ✅ Build `GET /api/phyllo/stats` route — queries `profile_social_stats` for the current auth user, returns per-platform stats; used by the frontend to poll for stats after the SDK connect callback fires
+10. ✅ Add polling loop in `usePhylloConnect.ts` `onAccountConnected` — after marking state as connected, poll `/api/phyllo/stats` every 2s up to 5 retries until the platform's stats appear, then call `options.onStatsReceived`
+11. Fix `create-user` route for new users — change `.single()` to `.maybeSingle()` so route doesn't 404 when no profile row exists yet; still create Phyllo user, skip DB update if profile is null
+12. Thread `phylloUserId` through form submit on create page — add `onPhylloUserIdReady` callback to `usePhylloConnect` and `PhylloConnectSection`; capture in `ProfileForm` state; include `phyllo_user_id` in the Supabase INSERT payload on profile creation
+13. Test end-to-end on staging with a fresh account
+

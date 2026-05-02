@@ -20,17 +20,17 @@ export async function POST(request: NextRequest) {
     .from("profiles")
     .select("phyllo_user_id")
     .eq("id", user.id)
-    .single()
+    .maybeSingle()
 
   if (profileError) {
     return NextResponse.json(
-      { error: "Profile not found. Create a profile first." },
-      { status: 404 }
+      { error: "Failed to look up profile." },
+      { status: 500 }
     )
   }
 
   // If already has a phyllo_user_id, return it (idempotent)
-  if (profile.phyllo_user_id) {
+  if (profile?.phyllo_user_id) {
     return NextResponse.json({
       phyllo_user_id: profile.phyllo_user_id,
       existing: true,
@@ -66,21 +66,16 @@ export async function POST(request: NextRequest) {
     const phylloData = await phylloResponse.json()
     const phylloUserId: string = phylloData.id
 
-    // 4. Store phyllo_user_id in the profiles table
-    const { error: updateError } = await supabase
-      .from("profiles")
-      .update({ phyllo_user_id: phylloUserId })
-      .eq("id", user.id)
+    // 4. If profile exists, save phyllo_user_id — skip if no profile yet
+    if (profile !== null) {
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({ phyllo_user_id: phylloUserId })
+        .eq("id", user.id)
 
-    if (updateError) {
-      console.error("Failed to save phyllo_user_id:", updateError)
-      // Still return the ID — the Phyllo user was created successfully.
-      // The frontend can retry the save, or the webhook flow will still work.
-      return NextResponse.json({
-        phyllo_user_id: phylloUserId,
-        existing: false,
-        warning: "Phyllo user created but failed to save to profile",
-      })
+      if (updateError) {
+        console.error("Failed to save phyllo_user_id:", updateError)
+      }
     }
 
     return NextResponse.json({

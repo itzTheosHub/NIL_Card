@@ -34,6 +34,7 @@ type UsePhylloConnectOptions = {
   onError?: (platform: PhylloPlatform, error: string) => void
   onDisconnected?: (platform: PhylloPlatform) => void
   onConnected?: (platform: PhylloPlatform, accountId: string) => void
+  onPhylloUserIdReady?: (id: string) => void
 }
 
 export function usePhylloConnect(options: UsePhylloConnectOptions = {}) {
@@ -167,6 +168,7 @@ export function usePhylloConnect(options: UsePhylloConnectOptions = {}) {
 
         const { phyllo_user_id } = await userRes.json()
         setPhylloUserId(phyllo_user_id)
+        optionsRef.current?.onPhylloUserIdReady?.(phyllo_user_id)
 
         // Step 2: Create SDK token
         const tokenRes = await fetch("/api/phyllo/create-token", {

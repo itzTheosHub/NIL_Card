@@ -25,6 +25,10 @@ const BUILD_STEPS = [
     "Build /api/phyllo/webhook route",
     "Build /api/phyllo/disconnect route",
     "Wire up connected state UI (checkmark, refresh, disconnect)",
+    "Build GET /api/phyllo/stats route",
+    "Add polling loop in usePhylloConnect onAccountConnected",
+    "Fix create-user route for new users with no profile",
+    "Thread phylloUserId through form submit on create page",
     "Test end-to-end on staging",
 ]
 

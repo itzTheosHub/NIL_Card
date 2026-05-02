@@ -20,6 +20,8 @@ const STEP_FILES: Record<number, string[]> = {
     8: ["components/ProfileForm.tsx"],
     9: ["app/api/phyllo/stats/route.ts", "lib/phyllo-stats.ts"],
     10: ["hooks/usePhylloConnect.ts"],
+    11: ["app/api/phyllo/create-user/route.ts"],
+    12: ["hooks/usePhylloConnect.ts", "components/PhylloConnectSection.tsx", "components/ProfileForm.tsx"],
 }
 
 const BUILD_STEPS = [
@@ -33,6 +35,8 @@ const BUILD_STEPS = [
     "Wire up connected state UI (checkmark, refresh, disconnect)",
     "Build GET /api/phyllo/stats route",
     "Add polling loop in usePhylloConnect onAccountConnected",
+    "Fix create-user route for new users with no profile",
+    "Thread phylloUserId through form submit on create page",
     "Test end-to-end on staging",
 ]
 

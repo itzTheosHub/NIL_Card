@@ -52,6 +52,7 @@ type EditProfileFormProps = {
                 socialLinks: SocialLink[]; 
                 tags: string[]; 
                 deliverables: string[]; 
+                phylloUserId?: string | null;
                 profilePhotoFile?: File | null;
                 featuredPosts: FeaturedPost[];
                 awards: Award[];
@@ -152,6 +153,7 @@ export default function EditProfilePage({initialFormData, initialSocialLinks, in
 
   // Animation var
   const [isTransitioning, setIsTransitioning] = useState(false)
+  const [capturedPhylloUserId, setCapturedPhylloUserId] = useState<string | null>(null)
 
   // Phyllo onStatsReceived callback — auto-populates engagement rate, avg views,
   // and updates the matching social link's follower count.
@@ -285,6 +287,7 @@ export default function EditProfilePage({initialFormData, initialSocialLinks, in
                           socialLinks, 
                           tags: selectedTags, 
                           deliverables: selectedDeliverables, 
+                          phylloUserId: capturedPhylloUserId,
                           profilePhotoFile: profilePhotoFile, 
                           featuredPosts, 
                           awards, 
@@ -366,6 +369,7 @@ export default function EditProfilePage({initialFormData, initialSocialLinks, in
                     onStatsReceived={handlePhylloStatsReceived}
                     onConnected={handlePhylloConnected}
                     onDisconnected={handlePhylloDisconnected}
+                    onPhylloUserIdReady={setCapturedPhylloUserId}
                   />
 
                   {/* Basic Info Section */}

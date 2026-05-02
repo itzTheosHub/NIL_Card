@@ -10,12 +10,13 @@ export default function CreateProfilePage() {
   const supabase = createClient()
   const router = useRouter()
 
-  const handleCreate = async (payload: 
+  const handleCreate = async (payload:
     {
-      formData: any; 
-      socialLinks: any[]; 
-      tags: string[]; 
-      deliverables: string[]; 
+      formData: any;
+      socialLinks: any[];
+      tags: string[];
+      deliverables: string[];
+      phylloUserId?: string | null;
       profilePhotoFile?: File | null;
       featuredPosts: any[];
       awards: any[];
@@ -23,7 +24,7 @@ export default function CreateProfilePage() {
       pressArticles: any[];
 
     }) => {
-    const { formData, socialLinks, tags, deliverables, profilePhotoFile, featuredPosts, awards, highlights, pressArticles} = payload
+    const { formData, socialLinks, tags, deliverables, profilePhotoFile, featuredPosts, awards, highlights, pressArticles, phylloUserId } = payload
     const { data: { user } } = await supabase.auth.getUser()
 
     
@@ -57,7 +58,9 @@ export default function CreateProfilePage() {
       graduation_year: parseInt(formData.gradYear), 
       division: formData.division,
       engagement_rate: parseFloat(formData.engagementRate),
-      avg_views: parseInt(formData.avgViews), total_followers: totalFollowers
+      avg_views: parseInt(formData.avgViews),
+      total_followers: totalFollowers,
+      phyllo_user_id: phylloUserId ?? null,
     })
 
     if (insertError)
