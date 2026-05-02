@@ -107,6 +107,7 @@ Both "Try Again" and manual input are always available as fallbacks.
 | `/api/phyllo/create-token` | POST | Generates a short-lived SDK token for the frontend |
 | `/api/phyllo/webhook` | POST | Receives data from Phyllo when stats are ready, writes to DB |
 | `/api/phyllo/disconnect` | POST | Removes Phyllo connection for a platform |
+| `/api/phyllo/stats` | GET | Returns per-platform stats for the current user from `profile_social_stats` — used to poll for stats after SDK connect |
 
 ### New DB Columns (profiles table)
 | Column | Type | Description |
@@ -170,12 +171,14 @@ PHYLLO_SECRET=
 
 ## Build Order
 
-1. Add DB columns to `profiles` table (Supabase migration)
-2. Add env vars to `.env.local` and Vercel
-3. Build `/api/phyllo/create-user` route
-4. Build `/api/phyllo/create-token` route
-5. Install Phyllo SDK, add connect buttons to ProfileForm
-6. Build `/api/phyllo/webhook` route
-7. Build `/api/phyllo/disconnect` route
-8. Wire up connected state UI (checkmark, refresh, disconnect)
-9. Test end-to-end on staging
+1. ✅ Add DB columns to `profiles` table (Supabase migration)
+2. ✅ Add env vars to `.env.local` and Vercel
+3. ✅ Build `/api/phyllo/create-user` route
+4. ✅ Build `/api/phyllo/create-token` route
+5. ✅ Install Phyllo SDK, add connect buttons to ProfileForm
+6. ✅ Build `/api/phyllo/webhook` route
+7. ✅ Build `/api/phyllo/disconnect` route
+8. ✅ Wire up connected state UI (checkmark, refresh, disconnect)
+9. Build `GET /api/phyllo/stats` route — queries `profile_social_stats` for the current auth user, returns per-platform stats; used by the frontend to poll for stats after the SDK connect callback fires
+10. Add polling loop in `usePhylloConnect.ts` `onAccountConnected` — after marking state as connected, poll `/api/phyllo/stats` every 2s up to 5 retries until the platform's stats appear, then call `options.onStatsReceived`
+11. Test end-to-end on staging

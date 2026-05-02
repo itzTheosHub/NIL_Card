@@ -18,7 +18,8 @@ const STEP_FILES: Record<number, string[]> = {
     6: ["app/api/phyllo/webhook/route.ts"],
     7: ["app/api/phyllo/disconnect/route.ts"],
     8: ["components/ProfileForm.tsx"],
-    9: [],
+    9: ["app/api/phyllo/stats/route.ts", "lib/phyllo-stats.ts"],
+    10: ["hooks/usePhylloConnect.ts"],
 }
 
 const BUILD_STEPS = [
@@ -30,6 +31,8 @@ const BUILD_STEPS = [
     "Build /api/phyllo/webhook route",
     "Build /api/phyllo/disconnect route",
     "Wire up connected state UI (checkmark, refresh, disconnect)",
+    "Build GET /api/phyllo/stats route",
+    "Add polling loop in usePhylloConnect onAccountConnected",
     "Test end-to-end on staging",
 ]
 
