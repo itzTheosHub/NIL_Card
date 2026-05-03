@@ -168,6 +168,10 @@ async function handleAccountConnected(
     connected: true,
     phyllo_account_id: accountId,
   })
+
+  // Immediately fetch profile + engagement data — available via REST as soon as account connects
+  await handleProfileData(supabase, profileId, accountId)
+  await handleEngagementData(supabase, profileId, accountId)
 }
 
 async function handleProfileData(
