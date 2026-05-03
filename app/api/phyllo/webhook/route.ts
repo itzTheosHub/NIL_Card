@@ -200,23 +200,11 @@ async function handleProfileData(
     connected: true,
   }
 
+  if (profileData.username !== null) statsData.username = profileData.username
   if (profileData.followerCount !== null) statsData.followers = profileData.followerCount
   if (profileData.totalPosts !== null) statsData.total_posts = profileData.totalPosts
 
   await upsertSocialStats(supabase, profileId, platform, statsData)
-
-  // Write username to the profiles table handle column
-  if (profileData.username) {
-    const handleColumn = platform === "instagram" ? "instagram_handle" : "tiktok_handle"
-    const { error: handleError } = await supabase
-      .from("profiles")
-      .update({ [handleColumn]: profileData.username })
-      .eq("id", profileId)
-
-    if (handleError) {
-      console.error(`[phyllo/webhook] Error updating ${handleColumn}:`, handleError.message)
-    }
-  }
 }
 
 async function handleEngagementData(

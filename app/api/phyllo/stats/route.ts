@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
   // Fetch per-platform stats from profile_social_stats
   const { data: statsRows, error: statsError } = await supabase
     .from("profile_social_stats")
-    .select("platform, followers, avg_views, engagement_rate, total_posts, connected")
+    .select("platform, followers, avg_views, engagement_rate, total_posts, connected, username")
     .eq("profile_id", user.id)
 
   if (statsError) {
@@ -26,12 +26,6 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     )
   }
-
-  const { data: handles } = await supabase
-    .from("profiles")
-    .select("instagram_handle, tiktok_handle")
-    .eq("id", user.id)
-    .maybeSingle()
 
   const igRow = statsRows?.find((r) => r.platform === "instagram") ?? null
   const ttRow = statsRows?.find((r) => r.platform === "tiktok") ?? null
@@ -42,12 +36,12 @@ export async function GET(request: NextRequest) {
     instagram_avg_views: igRow?.avg_views ?? null,
     instagram_engagement_rate: igRow?.engagement_rate ?? null,
     instagram_total_posts: igRow?.total_posts ?? null,
-    instagram_username: handles?.instagram_handle ?? null,
+    instagram_username: igRow?.username ?? null,
     tiktok_connected: ttRow?.connected ?? false,
     tiktok_followers: ttRow?.followers ?? null,
     tiktok_avg_views: ttRow?.avg_views ?? null,
     tiktok_engagement_rate: ttRow?.engagement_rate ?? null,
     tiktok_total_posts: ttRow?.total_posts ?? null,
-    tiktok_username: handles?.tiktok_handle ?? null,
+    tiktok_username: ttRow?.username ?? null,
   })
 }
