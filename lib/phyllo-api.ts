@@ -73,7 +73,7 @@ export type PhylloAudienceData = {
  */
 export async function fetchPhylloProfiles(accountId: string): Promise<PhylloProfileData | null> {
   try {
-    const data = await phylloFetch(`/social/profiles?account_id=${accountId}`)
+    const data = await phylloFetch(`/profiles?account_id=${accountId}`)
     const profiles = data?.data
     if (!profiles || profiles.length === 0) return null
 
