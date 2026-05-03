@@ -12,6 +12,7 @@ import {
 
 // Phyllo webhook event names we handle
 const ACCOUNT_EVENTS = ["ACCOUNTS.CONNECTED"]
+const ACCOUNT_DISCONNECTED_EVENTS = ["ACCOUNTS.DISCONNECTED"]
 const PROFILE_EVENTS = ["PROFILES.ADDED", "PROFILES.UPDATED"]
 const ENGAGEMENT_EVENTS = ["CONTENTS.ADDED", "CONTENTS.UPDATED"]
 const AUDIENCE_EVENTS = ["PROFILES_AUDIENCE.ADDED", "PROFILES_AUDIENCE.UPDATED"]
@@ -76,7 +77,7 @@ export async function POST(request: NextRequest) {
     .from("profiles")
     .select("id")
     .eq("phyllo_user_id", phylloUserId)
-    .single()
+    .maybeSingle()
 
   if (profileError || !profile) {
     console.warn(
@@ -98,6 +99,8 @@ export async function POST(request: NextRequest) {
   try {
     if (ACCOUNT_EVENTS.includes(eventName)) {
       await handleAccountConnected(supabase, profileId, platform, accountId)
+    } else if (ACCOUNT_DISCONNECTED_EVENTS.includes(eventName)) {
+      await handleAccountDisconnected(supabase, profileId, platform)
     } else if (PROFILE_EVENTS.includes(eventName)) {
       await handleProfileData(supabase, profileId, accountId)
     } else if (ENGAGEMENT_EVENTS.includes(eventName)) {
@@ -147,6 +150,25 @@ async function upsertSocialStats(
 }
 
 // ---------- Event Handlers ----------
+
+async function handleAccountDisconnected(
+  supabase: ReturnType<typeof createAdminClient>,
+  profileId: string,
+  platform: string,
+) {
+  console.log(`[phyllo/webhook] Account disconnected: platform=${platform}`)
+
+  if (!platform || !SUPPORTED_PLATFORMS.includes(platform)) {
+    console.warn("[phyllo/webhook] Unknown platform on ACCOUNTS.DISCONNECTED, skipping")
+    return
+  }
+
+  await supabase
+    .from("profile_social_stats")
+    .update({ connected: false })
+    .eq("profile_id", profileId)
+    .eq("platform", platform)
+}
 
 async function handleAccountConnected(
   supabase: ReturnType<typeof createAdminClient>,
