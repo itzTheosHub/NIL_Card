@@ -7,6 +7,7 @@ import Header from "@/components/Header"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
+import { ArrowLeft } from "lucide-react"
 
 export default function SignUpPage() {
     const [email, setEmail] = useState("")
@@ -51,6 +52,15 @@ export default function SignUpPage() {
 
             <main className="flex-1 flex place-items-center justify-center px-4">
                 <div className= "bg-white rounded-lg border border-zinc-200 p-8 shadow-md w-full max-w-md dark:bg-zinc-900 dark:border-zinc-700">
+                    <button
+                        type="button"
+                        onClick={() => router.back()}
+                        aria-label="Go back"
+                        className="flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors mb-4"
+                    >
+                        <ArrowLeft className="w-4 h-4" />
+                        Back
+                    </button>
                     <h1 className="text-2xl font-bold text-zinc-900 text-center mb-6 dark:text-zinc-100">
                         Sign Up
                     </h1>
