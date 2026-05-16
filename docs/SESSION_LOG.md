@@ -2,6 +2,36 @@
 
 ---
 
+**2026-05-16**
+- Decided to replace Phyllo with direct Meta (Instagram Graph API) + TikTok API — using Core Technical Solutions, LLC (uncle's LLC) for developer accounts. Waiting on approval.
+- Created branch `feature/direct-social-api` off master to build new integration while keeping Phyllo intact
+- Built `scripts/agents/playwright.ts` — Playwright agent that takes a bug description + target file, generates a test via Claude, runs it, and suggests a fix. Run with `npm run playwright`
+- Added `playwright.config.ts` — targets `localhost:3000`, auto-starts dev server, runs chromium only
+- Added `"playwright"` script to `package.json`
+- Added `test-results/` and `playwright-report/` to `.gitignore`
+- Fixed back button bug on `/login` — added `ArrowLeft` button calling `router.back()` (`app/login/page.tsx`)
+- Fixed back button on `/signup` — same pattern (`app/signup/page.tsx`)
+- Playwright e2e test written and passing: `e2e/back-button-on-login-doesnt-work.spec.ts`
+- Priorities from investor (uncle): buyer landing page, direct social API, Playwright for all bugs, AWS+Terraform later
+
+---
+
+**2026-05-02 / 2026-05-03**
+- Debugged and fixed full Phyllo social connect pipeline end-to-end
+- Fixed `stats/route.ts`: was querying wrong table/columns — now reads from `profile_social_stats`, returns flat format matching `PhylloStatsResponse`
+- Fixed `create-user/route.ts`: `.single()` → `.maybeSingle()` for new users with no profile row; added recovery when Phyllo returns `user_exists_with_external_id`
+- Fixed `disconnect/route.ts`: now handles 403 `account_disconnected` as "already disconnected"; fixed DB update to use `profile_social_stats` instead of `profiles`; `.single()` → `.maybeSingle()`
+- Fixed `webhook/route.ts`: wrong event names (`ENGAGEMENT.ADDED` → `CONTENTS.ADDED`, `AUDIENCE.ADDED` → `PROFILES_AUDIENCE.ADDED`); added `ACCOUNTS.DISCONNECTED` handler; `.single()` → `.maybeSingle()`; now calls `handleProfileData` + `handleEngagementData` immediately on `ACCOUNTS.CONNECTED` instead of waiting for separate events
+- Fixed `lib/phyllo-api.ts`: profiles endpoint was `/social/profiles` → corrected to `/profiles`
+- Moved `username` from `profiles.instagram_handle/tiktok_handle` to `profile_social_stats.username` column (cleaner schema)
+- Added `username text` column to `profile_social_stats` in Supabase
+- Confirmed full flow working: connect → webhook → `profile_social_stats` upsert → polling → UI shows Connected with followers + username
+- Known limitation: `avg_views` and `engagement_rate` null for accounts with no posts in last 90 days (Phyllo 90-day content window)
+- Instagram requires Meta Business Account for engagement data (surfaced by Phyllo SDK during OAuth)
+- Wrote `docs/PRD-onboarding-flow.md` — 3-stage onboarding: basics → social connect → profile details
+
+---
+
 **2026-04-16**
 - Fixed `create-user/route.ts`: updated import from `@/lib/supabase` (browser client) → `@/lib/supabase-server`, added `await` to `createClient()` call
 - Confirmed `lib/supabase-server.ts` was already created by implement agent (uses `createServerClient` from `@supabase/ssr`, reads cookies via `next/headers`)

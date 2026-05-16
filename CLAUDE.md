@@ -5,11 +5,16 @@ See `docs/SESSION_LOG.md` for session history.
 
 ---
 
-## Current Phase: 8 — Discoverability (`/athletes` directory)
+## Current Phase: Direct Social API Integration + Buyer Landing Page
 
-**Status:** In Progress
+**Status:** In progress — waiting on Meta/TikTok developer account approval
 
-**Next up:** `npm install phyllo-connect`, add `NEXT_PUBLIC_PHYLLO_ENVIRONMENT=staging` to `.env.local`, run `npm run validate 5`, then integrate `PhylloConnectSection` into `ProfileForm.tsx`.
+**Phyllo:** Being replaced with direct Meta (Instagram Graph API) + TikTok API via Core Technical Solutions, LLC (uncle's LLC). Branch: `feature/direct-social-api`.
+
+**Next up:**
+1. Buyer landing page (`/for-brands`) — high priority, targets businesses not athletes
+2. 3-stage onboarding flow — PRD written at `docs/PRD-onboarding-flow.md`, not started
+3. Direct Meta/TikTok API integration — blocked on developer account approval
 
 ---
 
@@ -19,7 +24,7 @@ See `docs/SESSION_LOG.md` for session history.
 - **Backend:** Supabase (auth, DB, storage)
 - **Email:** Resend (`onboarding@resend.dev` — needs custom domain)
 - **Deploy:** Vercel
-- **Branch:** `master`
+- **Branch:** `feature/direct-social-api` (active), `master` (stable)
 
 ---
 
@@ -51,5 +56,7 @@ See `docs/SESSION_LOG.md` for session history.
 - `npm run review` — code review: null safety, broken JSX, TypeScript errors, React patterns
 - `npm run mobile-check` — Tailwind mobile responsiveness audit
 - `npm run check-all` — runs all agents sequentially
+- `npm run playwright "<bug description>" <target-file>` — generates Playwright test, runs it, suggests fix
 - API routes (`/api/`) are excluded from mobile check (no UI to review)
 - Agents fall back to last commit when no uncommitted changes exist
+- Playwright tests live in `e2e/`, config at `playwright.config.ts`
