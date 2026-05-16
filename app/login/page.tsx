@@ -7,7 +7,7 @@ import Header from "@/components/Header"
 import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Eye, EyeOff } from "lucide-react"
+import { Eye, EyeOff, ArrowLeft } from "lucide-react"
 
 export default function LoginPage() {
     const [email, setEmail] = useState("")
@@ -63,6 +63,16 @@ export default function LoginPage() {
 
             <main className="flex-1 flex items-center justify-center px-4">
                 <div className="bg-white rounded-2xl border border-zinc-200 p-8 shadow-md w-full max-w-md dark:bg-zinc-900 dark:border-zinc-700">
+
+                    <button
+                        type="button"
+                        onClick={() => router.back()}
+                        aria-label="Go back"
+                        className="flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors mb-4"
+                    >
+                        <ArrowLeft className="w-4 h-4" />
+                        Back
+                    </button>
 
                     <div className="text-center mb-6">
                         <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">

@@ -13,7 +13,8 @@
     "spec-to-code": "tsx scripts/agents/spec-to-code.ts",
     "implement": "tsx scripts/agents/implement.ts",
     "validate": "tsx scripts/agents/validate.ts",
-    "feature-status": "tsx scripts/agents/feature-status.ts"
+    "feature-status": "tsx scripts/agents/feature-status.ts",
+    "playwright": "tsx scripts/agents/playwright.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.85.0",
@@ -31,6 +32,7 @@
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
