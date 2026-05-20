@@ -7,7 +7,16 @@ import Header from "@/components/Header"
 import FlippableCard from "./FlippableCard"
 import ProfileActions from "./ProfileActions"
 import Link from "next/link"
+import type { Metadata } from "next"
 
+export async function generateMetadata({ params }: { params: Promise<{ username: string }> }): Promise<Metadata> {
+    const supabase = createClient()
+    const { username } = await params
+    const { data: profile } = await supabase.from("profiles").select("full_name").eq("username", username).single()
+    return {
+        title: profile?.full_name ? `${profile.full_name} | NIL-Card` : "NIL-Card",
+    }
+}
 
 export default async function ProfilePage( {params, searchParams}: { params: Promise<{ username: string }>; searchParams: Promise<{ ref?: string }> }) {
 
