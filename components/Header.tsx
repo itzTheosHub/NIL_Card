@@ -44,7 +44,8 @@ export default function Header({ children, hidePillNav }: { children?: React.Rea
   return (
     <>
       <header className="fixed top-4 left-0 right-0 z-50 flex items-center px-6">
-        {/* Logo — scales down on mobile, full size on desktop */}
+        {/* Logo — flex-1 so it balances the right side for true pill centering */}
+        <div className="flex-1">
         <Link href="/" className="flex items-center opacity-90 hover:opacity-100 hover:drop-shadow-[0_0_8px_rgba(139,92,246,0.6)] transition-all">
           <svg
             width="165"
@@ -82,13 +83,14 @@ export default function Header({ children, hidePillNav }: { children?: React.Rea
             <path d="M44 28H128" stroke="url(#nilCardGradientH)" strokeWidth="1.5" strokeLinecap="round" opacity="0.65" />
           </svg>
         </Link>
+        </div>
 
-        {/* Pill nav — mx-auto on mobile (in flow), absolute centered on desktop */}
+        {/* Pill nav — always absolute centered so logo/hamburger widths don't affect position */}
         {!user && !hidePillNav && (
-          <nav className="mx-auto md:mx-0 md:absolute md:left-1/2 md:-translate-x-1/2 flex items-center rounded-full border border-white/10 bg-zinc-900/80 p-1 backdrop-blur-md shadow-[0_0_20px_rgba(124,58,237,0.08),0_0_40px_rgba(59,130,246,0.05)]">
+          <nav className="absolute left-1/2 -translate-x-1/2 flex items-center rounded-full border border-white/10 bg-zinc-900/80 p-1 backdrop-blur-md shadow-[0_0_20px_rgba(124,58,237,0.08),0_0_40px_rgba(59,130,246,0.05)]">
             <Link
               href="/"
-              className={`rounded-full px-2 md:px-4 py-1.5 text-xs md:text-sm font-medium transition-colors ${
+              className={`rounded-full px-2 md:px-4 py-1.5 text-xs md:text-sm font-medium whitespace-nowrap transition-colors ${
                 pathname === "/"
                   ? "text-white bg-gradient-to-r from-violet-600 to-blue-500 shadow-[0_0_12px_rgba(124,58,237,0.4)]"
                   : "text-zinc-400 hover:text-white"
@@ -98,7 +100,7 @@ export default function Header({ children, hidePillNav }: { children?: React.Rea
             </Link>
             <Link
               href="/for-brands"
-              className={`rounded-full px-2 md:px-4 py-1.5 text-xs md:text-sm font-medium transition-colors ${
+              className={`rounded-full px-2 md:px-4 py-1.5 text-xs md:text-sm font-medium whitespace-nowrap transition-colors ${
                 pathname === "/for-brands"
                   ? "text-white bg-gradient-to-r from-violet-600 to-blue-500 shadow-[0_0_12px_rgba(124,58,237,0.4)]"
                   : "text-zinc-400 hover:text-white"
@@ -110,7 +112,7 @@ export default function Header({ children, hidePillNav }: { children?: React.Rea
         )}
 
         {/* Right side */}
-        <div className="ml-auto flex items-center gap-2">
+        <div className="flex-1 flex items-center justify-end gap-2">
           {children}
           {!children && !authLoading && !user && (
             <Link
