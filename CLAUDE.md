@@ -11,10 +11,19 @@ See `docs/SESSION_LOG.md` for session history.
 
 **Phyllo:** Being replaced with direct Meta (Instagram Graph API) + TikTok API via Core Technical Solutions, LLC (uncle's LLC). Branch: `feature/direct-social-api`.
 
+**Domain:** `nil-card.com` (use this everywhere, not `nilcard.vercel.app`)
+
 **Next up:**
-1. Buyer landing page (`/for-brands`) — high priority, targets businesses not athletes
-2. 3-stage onboarding flow — PRD written at `docs/PRD-onboarding-flow.md`, not started
-3. Direct Meta/TikTok API integration — blocked on developer account approval
+1. 3-stage onboarding flow — PRD written at `docs/PRD-onboarding-flow.md`, not started
+2. Direct Meta/TikTok API integration — blocked on developer account approval
+3. Marketplace (`/marketplace`) — built but basic, needs improvement
+
+**Completed this session (2026-05-19):**
+- Profile page: ambient blobs, pill nav hidden (`hidePillNav`), click-anywhere-to-flip FlippableCard, outer card glow via `boxShadow`
+- `ProfileActions` component: Edit Profile + Copy Link buttons in header, visible to profile owner only
+- Header: fixed `{children}` rendering — prop was accepted but never rendered
+- `ProfileForm` full dark rewrite: removed shadcn + Phyllo, dark inputs (`bg-zinc-800`), sport/grad year dropdowns (2026–2031), bio textarea (400 char), stats validation, platform auto-detect, cancel/save top bar, clickable step indicator
+- ProfileForm fixes: caption field for featured posts, Awards/Highlights descriptions as textareas, X/Twitter in platform toggle, press article placeholder improved, division uses `inputClasses`, total followers height aligned, cancel link safe for new users, domain updated to `nil-card.com`
 
 ---
 
@@ -45,9 +54,15 @@ See `docs/SESSION_LOG.md` for session history.
 | Issue | Root Cause | Solution | File |
 |-------|-----------|----------|------|
 | TikTok/Instagram "Copy Link" generates short URLs that can't be parsed for embed ID | Short URLs redirect to full URLs but parser needs `/video/` or `/p/` in path | Built `/api/resolve-url` — server-side `fetch` with `redirect: "follow"`; called `onBlur` of featured post URL input | `app/api/resolve-url/route.ts`, `components/ProfileForm.tsx` |
+| Athlete names not showing on desktop HeroAthleteCards | `background-clip: padding-box` technique on parent div caused text rendering failure inside 3D compositing context (`preserve-3d`) | Replaced with `bg-zinc-900` + `boxShadow: "inset 0 0 0 1.5px rgba(139,92,246,0.5)"` for the gradient border — do NOT use background-clip inside preserve-3d containers | `components/HeroAthleteCards.tsx` |
 | New user profile crashes with `Cannot read properties of null (reading 'toString')` | `total_followers`, `avg_views`, `engagement_rate` nullable in DB but typed as `number` | Added `num == null` guard to `formatNumber`/`formatEngagement` in `FlippableCard.tsx`, returning `"—"` | `app/profile/[username]/FlippableCard.tsx` |
 | Password reset "Auth session missing" error | Recovery token lives in URL hash — Supabase needs to detect it before `updateUser` works | Added `supabase.auth.onAuthStateChange` listener for `PASSWORD_RECOVERY` event in `useEffect` | `app/reset-password/page.tsx` |
 | Double eye icon in Chrome on password fields | Chrome injects native password reveal icon on top of custom one | Added `[&::-ms-reveal]:hidden [&::-webkit-credentials-auto-fill-button]:hidden` to Input className | `app/login/page.tsx`, `app/reset-password/page.tsx` |
+| Header pill nav crowding / off-center on mobile | Logo SVG is 165px wide — overlaps with absolutely centered pill on small screens | Logo uses `w-[110px] md:w-[165px] h-auto` CSS on SVG (viewBox scales everything proportionally). Pill uses `mx-auto` on mobile (in flex flow, centers in remaining space) and `md:absolute md:left-1/2 md:-translate-x-1/2` on desktop. Pill links: `px-2 md:px-4 text-xs md:text-sm` | `components/Header.tsx`, `components/ForBrandsHeader.tsx` |
+| Pill nav pills switching sides when navigating between pages | `ForBrandsHeader` had Business on left, Athlete on right — opposite of `Header`. Fixed by making both headers use `usePathname` for active state with Athlete always left, Business always right | Both headers now render Athlete first (left), Business second (right). Active pill determined by `pathname === "/"` vs `pathname.startsWith("/for-brands")` | `components/Header.tsx`, `components/ForBrandsHeader.tsx` |
+| Profile page ambient blobs invisible | `-z-10` on the `fixed` blob container renders behind opaque `bg-[#08090a]` body background | Remove `-z-10` entirely — use `pointer-events-none fixed inset-0 overflow-hidden` with no z-index, matching login/signup pattern | `app/profile/[username]/page.tsx` |
+| Header `children` prop silently dropped | Header accepted `children` but the JSX never rendered it | Added `{children}` to the right-side div before the hamburger button | `components/Header.tsx` |
+| Stats layout shift on social link follower hint | Hint text appearing/disappearing changed row height; `items-end` caused bottom-alignment drift | Always-rendered `<p className="text-xs mt-1 h-4">` reserves space; changed flex row to `items-start` | `components/ProfileForm.tsx` |
 
 ---
 

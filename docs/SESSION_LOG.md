@@ -2,6 +2,24 @@
 
 ---
 
+**2026-05-17**
+- Built `/for-brands` buyer landing page end-to-end using an agentic spec-to-code pipeline (PRD v3 → `docs/PRD-buyer-landing-v3.md`)
+- Created `components/ForBrandsHeader.tsx` — fixed top navbar with inline SVG logo (left-anchored), centered pill nav, "Get Started" button right-anchored. Pill uses `absolute left-1/2 -translate-x-1/2` so it stays centered regardless of logo/CTA widths.
+- Logo is a pure inline SVG (no image files) — icon card + "NIL" gradient text + hyphen rect + "Card" text + accent underline. Uses `gradientUnits="userSpaceOnUse"` for correct gradient coords. Font: `var(--font-geist-sans), Inter, sans-serif`.
+- SVG enhancements applied: gradient fill on "NIL" text, hover glow on logo link (`hover:drop-shadow`), icon bg color matched to page bg (`#08090a`), tightened NIL–dash–Card spacing.
+- Created `components/HeroAthleteCards.tsx` — 4 flippable fan-spread cards with front (athlete info) + back (deal stats). 3D flip via custom `@utility` classes in `globals.css`.
+- Created `components/UniversityLogoBar.tsx` — 8 university abbreviation chips scrolling with `animate-scroll`, hover-to-pause, gradient fade edges.
+- Created `components/InteractiveDemo.tsx` — pick business type → AI matching simulation → show 3 matched athletes with match % and reason. No shadcn.
+- Created `components/LiveFeed.tsx` — cycling live signup feed (10 entries, rotates every 4s), emerald ping dot.
+- Fixed `next-themes` React 19 `<script>` tag error by wrapping `ThemeProvider` in a `"use client"` `Providers` component.
+- Fixed `next/image` 500 by adding `images.unsplash.com` to `next.config.ts` remotePatterns.
+- Added `@keyframes blob`, `animate-blob`, `animate-blob-delay-2/3`, `animate-scroll`, 3D flip utilities to `globals.css`.
+- Removed sport badges marquee bar and social proof stats section (200+ athletes, hand-picked, etc.) from `/for-brands` — user didn't want them.
+- Organized design references into `design-refs/for-brands-v2/` and `design-refs/for-brands-v3/`. Added both to `.gitignore`.
+- `/for-brands` page design not finalized — user wants to keep iterating next session.
+
+---
+
 **2026-05-16**
 - Decided to replace Phyllo with direct Meta (Instagram Graph API) + TikTok API — using Core Technical Solutions, LLC (uncle's LLC) for developer accounts. Waiting on approval.
 - Created branch `feature/direct-social-api` off master to build new integration while keeping Phyllo intact

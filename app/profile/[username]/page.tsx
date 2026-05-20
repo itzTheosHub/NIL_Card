@@ -3,9 +3,9 @@ import { Eye, Users, TrendingUp, Camera, Video,
         Package, Calendar, Award, Share2, BadgeCheck, GraduationCap, ExternalLink, ImagePlus, ImagePlay, MessageSquareQuote, Youtube, RotateCcw } from "lucide-react"
 import { createClient } from "@/lib/supabase"
 import ContactSection  from "./ContactSection"
-import EditProfileButton from "./EditProfileButton"
 import Header from "@/components/Header"
 import FlippableCard from "./FlippableCard"
+import ProfileActions from "./ProfileActions"
 
 
 export default async function ProfilePage( {params}: { params: Promise<{ username: string }> }) {
@@ -16,9 +16,12 @@ export default async function ProfilePage( {params}: { params: Promise<{ usernam
     const { username } = await params
     const { data: profile } = await supabase.from("profiles").select("*").eq("username", username).single()
 
-    if (!profile)
-    {
-        return <div>Profile not found</div>
+    if (!profile) {
+        return (
+            <div className="flex min-h-screen flex-col items-center justify-center bg-[#08090a] text-white">
+                <p className="text-white/40 text-sm">Profile not found.</p>
+            </div>
+        )
     }
 
     const { data: socialLinks } = await supabase.from("social_links").select("*").eq("profile_id", profile.id)
@@ -46,12 +49,22 @@ export default async function ProfilePage( {params}: { params: Promise<{ usernam
     
 
     return (
-        <div className="flex min-h-screen flex-col bg-zinc-50 dark:bg-zinc-950">
-            <Header>
-                <EditProfileButton profileId={profile.id} username={username}/>
+        <div className="flex min-h-screen flex-col bg-[#08090a] text-white">
+            {/* Ambient blobs */}
+            <div className="pointer-events-none fixed inset-0 overflow-hidden">
+                <div className="absolute -top-20 -left-20 w-[500px] h-[500px] rounded-full bg-violet-600/20 blur-[120px]" />
+                <div className="absolute -top-20 -right-20 w-[400px] h-[400px] rounded-full bg-blue-500/15 blur-[100px]" />
+                <div className="absolute top-1/3 -left-20 w-[300px] h-[500px] rounded-full bg-violet-600/15 blur-[90px]" />
+                <div className="absolute top-1/3 -right-20 w-[300px] h-[500px] rounded-full bg-blue-500/15 blur-[90px]" />
+                <div className="absolute bottom-0 left-1/3 w-[400px] h-[300px] rounded-full bg-violet-600/10 blur-[100px]" />
+            </div>
+
+            <Header hidePillNav>
+                <ProfileActions profileId={profile.id} username={username} />
             </Header>
 
-            <main className="mx-auto max-w-2xl px-4 py-8">
+            <main className="mx-auto max-w-2xl w-full px-4 pt-24 pb-8">
+                <div className="relative">
                 <FlippableCard
                     profile={profile}
                     socialLinks={socialLinks ?? []}
@@ -62,6 +75,7 @@ export default async function ProfilePage( {params}: { params: Promise<{ usernam
                     highlights={highlights ?? []}
                     pressArticles={pressArticles ?? []}
                 />
+                </div>
             </main>
         </div>
     )

@@ -316,12 +316,12 @@ export default function EditProfilePage() {
 
     if (loading) {
          return (
-         <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
+         <div className="flex min-h-screen items-center justify-center bg-[#08090a]">
               <div className="text-center">
                   <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-violet-600 to-blue-500 rounded-full mb-4 animate-spin">
                       <Sparkles className="w-6 h-6 text-white" />
                   </div>
-                  <p className="text-zinc-600 dark:text-zinc-400">Loading your profile...</p>
+                  <p className="text-zinc-400">Loading your profile...</p>
               </div>
           </div>
       )
