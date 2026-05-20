@@ -1,6 +1,6 @@
 @import "tailwindcss";
+
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -42,9 +42,6 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
 }
 
 :root {
@@ -85,11 +82,11 @@
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
+  --card: oklch(0.145 0 0);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
+  --popover: oklch(0.145 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
+  --primary: oklch(0.985 0 0);
   --primary-foreground: oklch(0.205 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
@@ -97,10 +94,10 @@
   --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
@@ -112,57 +109,97 @@
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar-border: oklch(0.269 0 0);
+  --sidebar-ring: oklch(0.439 0 0);
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
   }
 }
 
-@keyframes fadeSlideIn {
-  from {
-    opacity: 0;
-    transform: translateX(32px);
-  }
-  to {
-    opacity: 1;
+/* ---- Brand page marquee animation ---- */
+@keyframes marquee {
+  0% {
     transform: translateX(0);
   }
-}
-.animate-fade-slide-in {
-  animation: fadeSlideIn 0.4s ease forwards;
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
-@keyframes fadeSlideOut {
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+/* ---- University logo bar scroll ---- */
+@keyframes logo-scroll {
   from {
-    opacity: 1;
     transform: translateX(0);
   }
   to {
-    opacity: 0;
-    transform: translateX(-32px)
+    transform: translateX(-50%);
   }
 }
 
-.animate-fade-slide-out {
-  animation: fadeSlideOut 0.4s ease forwards;
+.animate-scroll {
+  animation: logo-scroll 25s linear infinite;
 }
 
 
-@keyframes holographic {
-  0% { background-position: 0% 50% }
-  50% { background-position: 100% 50% }
-  100% { background-position: 0% 50% }
+/* ---- Hero background blobs ---- */
+@keyframes blob {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(20px, -20px) scale(1.05);
+  }
+  66% {
+    transform: translate(-15px, 10px) scale(0.97);
+  }
 }
 
-.holographic-border {
-  background: linear-gradient(135deg, #8B5CF6, #A855F7, #3B82F6, #6366F1, #06B6D4, #3B82F6, #8B5CF6);
-  background-size: 300%;
-  animation: holographic 2.5s linear infinite;
+/* ---- Tailwind v4 custom utilities ---- */
+
+
+@utility animate-blob {
+  animation: blob 8s ease-in-out infinite;
+}
+
+@utility animate-blob-delay-2 {
+  animation: blob 8s ease-in-out infinite 2s;
+}
+
+@utility animate-blob-delay-3 {
+  animation: blob 8s ease-in-out infinite 4s;
+}
+
+/* ---- Autofill override for dark inputs ---- */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #27272a inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #ffffff;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* 3D card flip utilities */
+@utility perspective-1000 {
+  perspective: 1000px;
+}
+
+@utility transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+@utility backface-hidden {
+  backface-visibility: hidden;
 }

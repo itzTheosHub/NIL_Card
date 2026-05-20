@@ -2,6 +2,10 @@
 tmpclaude*
 .claude/
 
+# v0 design reference files (local only)
+/design-refs/
+/homepage-redesign/
+
 # dependencies
 /node_modules
 /.pnp

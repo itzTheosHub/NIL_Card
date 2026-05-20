@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { ThemeProvider } from "next-themes";
 import { Geist, Geist_Mono } from "next/font/google";
+import Providers from "@/components/Providers";
 import Link from "next/link";
 import "./globals.css";
 
@@ -31,31 +31,27 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
-        <ThemeProvider 
-          attribute="class" 
-          defaultTheme="system" 
-          enableSystem
-        >
+        <Providers>
           {children}
-          <footer className="border-t border-zinc-200 bg-zinc-50 py-8 px-4 dark:border-zinc-800 dark:bg-zinc-950">
+          <footer className="border-t border-zinc-800 bg-[#08090a] py-8 px-4">
             <div className="mx-auto max-w-4xl flex flex-col items-center justify-between gap-4 sm:flex-row">
-              <span className="text-sm text-zinc-600 dark:text-zinc-400">
+              <span className="text-sm text-zinc-500">
                 © 2026 NIL Card. All rights reserved.
               </span>
               <div className="flex gap-6">
-                <Link href="/privacy" className="text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100">
+                <Link href="/privacy" className="text-sm text-zinc-500 hover:text-white transition-colors">
                   Privacy
                 </Link>
-                <Link href="/terms" className="text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100">
+                <Link href="/terms" className="text-sm text-zinc-500 hover:text-white transition-colors">
                   Terms
                 </Link>
-                <Link href="/contact" className="text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100">
+                <Link href="/contact" className="text-sm text-zinc-500 hover:text-white transition-colors">
                   Contact
                 </Link>
               </div>
             </div>
           </footer>
-        </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );

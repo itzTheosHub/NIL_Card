@@ -3,11 +3,39 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase"
-import Header from "@/components/Header"
 import { useRouter } from "next/navigation"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
 import { Eye, EyeOff, ArrowLeft } from "lucide-react"
+
+function Logo() {
+    return (
+        <Link href="/" className="flex items-center opacity-90 hover:opacity-100 hover:drop-shadow-[0_0_8px_rgba(139,92,246,0.6)] transition-all">
+            <svg width="165" height="34" viewBox="0 0 165 34" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="NIL Card" className="w-[165px] h-auto">
+                <defs>
+                    <linearGradient id="loginLogoGrad" x1="0" y1="0" x2="165" y2="34" gradientUnits="userSpaceOnUse">
+                        <stop stopColor="#8B5CF6" />
+                        <stop offset="1" stopColor="#3B82F6" />
+                    </linearGradient>
+                    <filter id="loginLogoGlow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur stdDeviation="1.5" result="blur" />
+                        <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                    </filter>
+                </defs>
+                <g filter="url(#loginLogoGlow)">
+                    <rect x="2" y="5" width="31" height="24" rx="7" fill="#08090a" stroke="url(#loginLogoGrad)" strokeWidth="1.8" />
+                    <circle cx="13" cy="14" r="4" fill="url(#loginLogoGrad)" />
+                    <path d="M7.5 23.5C8.2 19.8 10.2 18 13 18C15.8 18 17.8 19.8 18.5 23.5" stroke="url(#loginLogoGrad)" strokeWidth="2" strokeLinecap="round" />
+                    <path d="M22 12H28" stroke="#93C5FD" strokeWidth="1.7" strokeLinecap="round" />
+                    <path d="M22 17H27" stroke="#A78BFA" strokeWidth="1.7" strokeLinecap="round" opacity="0.75" />
+                    <path d="M25.8 23.2L27.1 24.5L30 21.5" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </g>
+                <text x="43" y="23" fontFamily="var(--font-geist-sans), Inter, sans-serif" fontSize="19" fontWeight="850" letterSpacing="-0.9" fill="url(#loginLogoGrad)">NIL</text>
+                <rect x="75" y="16" width="10" height="2.4" rx="2" fill="url(#loginLogoGrad)" />
+                <text x="90" y="23" fontFamily="var(--font-geist-sans), Inter, sans-serif" fontSize="19" fontWeight="500" letterSpacing="-0.7" fill="#E2E8F0">Card</text>
+                <path d="M44 28H128" stroke="url(#loginLogoGrad)" strokeWidth="1.5" strokeLinecap="round" opacity="0.65" />
+            </svg>
+        </Link>
+    )
+}
 
 export default function LoginPage() {
     const [email, setEmail] = useState("")
@@ -58,79 +86,102 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="flex min-h-screen flex-col bg-zinc-50 dark:bg-zinc-950">
-            <Header />
+        <div className="flex min-h-screen flex-col bg-[#08090a] text-white">
+            {/* Ambient blobs */}
+            <div className="pointer-events-none fixed inset-0 overflow-hidden">
+                <div className="absolute -top-20 -left-20 w-[500px] h-[500px] rounded-full bg-violet-600/25 blur-[120px]" />
+                <div className="absolute -top-20 -right-20 w-[450px] h-[450px] rounded-full bg-blue-500/20 blur-[120px]" />
+                <div className="absolute top-1/3 -left-20 w-[300px] h-[300px] rounded-full bg-violet-500/10 blur-[80px]" />
+                <div className="absolute top-1/3 -right-20 w-[300px] h-[300px] rounded-full bg-blue-400/10 blur-[80px]" />
+                <div className="absolute bottom-0 left-1/4 w-[400px] h-[300px] rounded-full bg-violet-600/10 blur-[100px]" />
+                <div className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-blue-500/15 blur-[100px]" />
+            </div>
 
-            <main className="flex-1 flex items-center justify-center px-4">
-                <div className="bg-white rounded-2xl border border-zinc-200 p-8 shadow-md w-full max-w-md dark:bg-zinc-900 dark:border-zinc-700">
+            <div className="relative flex items-center px-6 py-5">
+                <Logo />
+            </div>
 
+            <main className="relative flex-1 flex items-center justify-center px-4 pb-12">
+                <div className="w-full max-w-md flex flex-col items-center">
+                <div className="text-center mb-8">
+                    <p className="text-2xl font-bold tracking-tight">
+                        Your NIL Card{" "}
+                        <span className="bg-gradient-to-r from-violet-400 to-blue-400 bg-clip-text text-transparent">
+                            is waiting.
+                        </span>
+                    </p>
+                    <p className="text-sm text-white/30 mt-2">Sign in to manage your card and pitch local brands.</p>
+                </div>
+
+                <div
+                    className="bg-zinc-900 rounded-2xl p-8 w-full"
+                    style={{ boxShadow: "inset 0 0 0 1.5px rgba(139,92,246,0.3), 0 0 40px rgba(124,58,237,0.1)" }}
+                >
                     <button
                         type="button"
                         onClick={() => router.back()}
-                        aria-label="Go back"
-                        className="flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors mb-4"
+                        className="flex items-center gap-1.5 text-sm text-zinc-500 hover:text-white transition-colors mb-6"
                     >
                         <ArrowLeft className="w-4 h-4" />
                         Back
                     </button>
 
-                    <div className="text-center mb-6">
-                        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-                            Welcome back
-                        </h1>
-                        <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-                            Sign in to your NIL Card account
-                        </p>
+                    <div className="text-center mb-8">
+                        <h1 className="text-2xl font-bold text-white">Welcome back</h1>
+                        <p className="text-sm text-white/40 mt-1">Sign in to your NIL Card account</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-                        <Input
+                        <input
                             type="email"
                             placeholder="Email"
                             value={email}
                             onChange={(e) => { setEmail(e.target.value); setError(null) }}
                             required
+                            className="w-full bg-zinc-800 border border-zinc-700/50 rounded-xl px-4 py-3 text-white placeholder:text-zinc-500 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-colors text-sm"
                         />
                         <div className="relative">
-                            <Input
+                            <input
                                 type={showPassword ? "text" : "password"}
                                 placeholder="Password"
                                 value={password}
                                 onChange={(e) => { setPassword(e.target.value); setError(null) }}
-                                className="pr-10 [&::-ms-reveal]:hidden [&::-webkit-credentials-auto-fill-button]:hidden"
                                 required
+                                className="w-full bg-zinc-800 border border-zinc-700/50 rounded-xl px-4 py-3 pr-11 text-white placeholder:text-zinc-500 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-colors text-sm [&::-ms-reveal]:hidden [&::-webkit-credentials-auto-fill-button]:hidden"
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors"
                             >
                                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                             </button>
                         </div>
-                        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-                        <Button
+
+                        {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+
+                        <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-2 rounded-md bg-gradient-to-r from-violet-600 to-blue-500 text-white font-medium hover:from-violet-700 hover:to-blue-600 disabled:opacity-50 disabled:cursor-not-allowed mt-1"
+                            className="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-blue-500 hover:from-violet-700 hover:to-blue-600 text-white font-semibold text-sm transition-all hover:shadow-[0_0_20px_rgba(124,58,237,0.4)] disabled:opacity-50 disabled:cursor-not-allowed mt-1"
                         >
                             {loading ? "Signing in..." : "Sign in"}
-                        </Button>
+                        </button>
                     </form>
 
-                    <div className="flex flex-col items-center mt-3 gap-1">
+                    <div className="flex flex-col items-center mt-4 gap-1">
                         {resetSent ? (
                             <>
-                                <p className="text-sm text-green-500">Check your email for a reset link.</p>
+                                <p className="text-sm text-emerald-400">Check your email for a reset link.</p>
                                 {resendCooldown > 0 ? (
-                                    <p className="text-xs text-zinc-400">Resend available in {resendCooldown}s</p>
+                                    <p className="text-xs text-zinc-500">Resend available in {resendCooldown}s</p>
                                 ) : (
                                     <button
                                         type="button"
                                         onClick={handleForgotPassword}
-                                        className="text-xs text-violet-500 hover:text-violet-600 transition-colors"
+                                        className="text-xs text-violet-400 hover:text-violet-300 transition-colors"
                                     >
-                                        Didn't receive it? Resend email
+                                        Didn&apos;t receive it? Resend email
                                     </button>
                                 )}
                             </>
@@ -138,27 +189,25 @@ export default function LoginPage() {
                             <button
                                 type="button"
                                 onClick={handleForgotPassword}
-                                className="text-sm text-violet-500 hover:text-violet-600 transition-colors"
+                                className="text-sm text-violet-400 hover:text-violet-300 transition-colors"
                             >
                                 Forgot password?
                             </button>
                         )}
                     </div>
 
-                    <div className="border-t border-zinc-200 dark:border-zinc-700 my-6" />
+                    <div className="border-t border-white/5 my-6" />
 
                     <div className="text-center">
-                        <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-3">
-                            Don&#39;t have an account?
-                        </p>
+                        <p className="text-sm text-white/40 mb-3">Don&apos;t have an account?</p>
                         <Link
                             href="/signup"
-                            className="block w-full py-2 rounded-md border border-zinc-300 text-zinc-700 font-medium hover:bg-zinc-100 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-800 transition-colors"
+                            className="block w-full py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-white font-medium text-sm transition-colors text-center"
                         >
-                            Sign up
+                            Create a free account
                         </Link>
                     </div>
-
+                </div>
                 </div>
             </main>
         </div>

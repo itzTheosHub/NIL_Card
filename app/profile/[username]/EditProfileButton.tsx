@@ -30,7 +30,7 @@ export default function EditProfileButton({ profileId, username }: {profileId: s
             className="flex items-center gap-1.5 px-4 py-2 rounded-md bg-gradient-to-r from-violet-600 to-blue-500 hover:from-violet-700 hover:to-blue-600 text-white text-sm font-medium transition-all duration-300"
         >
             <Pencil className="w-4 h-4"/>
-                Edit Profile
+                Edit Card
         </Link>
     )
        
