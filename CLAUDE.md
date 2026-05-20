@@ -64,6 +64,8 @@ See `docs/SESSION_LOG.md` for session history.
 | Profile page ambient blobs invisible | `-z-10` on the `fixed` blob container renders behind opaque `bg-[#08090a]` body background | Remove `-z-10` entirely — use `pointer-events-none fixed inset-0 overflow-hidden` with no z-index, matching login/signup pattern | `app/profile/[username]/page.tsx` |
 | Header `children` prop silently dropped | Header accepted `children` but the JSX never rendered it | Added `{children}` to the right-side div before the hamburger button | `components/Header.tsx` |
 | Stats layout shift on social link follower hint | Hint text appearing/disappearing changed row height; `items-end` caused bottom-alignment drift | Always-rendered `<p className="text-xs mt-1 h-4">` reserves space; changed flex row to `items-start` | `components/ProfileForm.tsx` |
+| Pill nav overlapping logo on mobile / text wrapping | `mx-auto` doesn't truly center when logo and hamburger have different widths; pill too wide for mobile | Switched to `absolute left-1/2 -translate-x-1/2` on all screen sizes; added `whitespace-nowrap`; pill text shortened to "Athlete"/"Business" on mobile (`hidden sm:inline` hides "I'm an "/"I'm a ") | `components/Header.tsx`, `components/ForBrandsHeader.tsx` |
+| Hamburger larger on homepage than for-brands page | `Header.tsx` used `py-2 px-3` vs `ForBrandsHeader.tsx` `p-2` | Changed Header.tsx hamburger to `p-2` to match | `components/Header.tsx` |
 
 ---
 
