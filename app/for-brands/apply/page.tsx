@@ -189,6 +189,7 @@ export default function ForBrandsApplyPage() {
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-sm font-medium text-white/60">Budget per athlete</label>
+                  <p className="text-xs text-white/30">What are you willing to pay per deliverable or deal?</p>
                   <div className="relative">
                     <select
                       required
