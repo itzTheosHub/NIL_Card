@@ -132,7 +132,7 @@ export default function Header({ children, hidePillNav }: { children?: React.Rea
           )}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="rounded-full border border-white/10 bg-zinc-900/80 py-2 px-3 text-zinc-400 hover:text-white backdrop-blur-md transition-all hover:bg-white/10"
+            className="rounded-full border border-white/10 bg-zinc-900/80 p-2 text-zinc-400 hover:text-white backdrop-blur-md transition-all hover:bg-white/10"
           >
             <Menu className="w-4 h-4" />
           </button>
