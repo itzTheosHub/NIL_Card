@@ -1,19 +1,22 @@
 import Image from "next/image"
 import { Eye, Users, TrendingUp, Camera, Video,
-        Package, Calendar, Award, Share2, BadgeCheck, GraduationCap, ExternalLink, ImagePlus, ImagePlay, MessageSquareQuote, Youtube, RotateCcw } from "lucide-react"
+        Package, Calendar, Award, Share2, BadgeCheck, GraduationCap, ExternalLink, ImagePlus, ImagePlay, MessageSquareQuote, Youtube, RotateCcw, ArrowLeft } from "lucide-react"
 import { createClient } from "@/lib/supabase"
 import ContactSection  from "./ContactSection"
 import Header from "@/components/Header"
 import FlippableCard from "./FlippableCard"
 import ProfileActions from "./ProfileActions"
+import Link from "next/link"
 
 
-export default async function ProfilePage( {params}: { params: Promise<{ username: string }> }) {
+export default async function ProfilePage( {params, searchParams}: { params: Promise<{ username: string }>; searchParams: Promise<{ ref?: string }> }) {
 
     // Fetch data with await
     // Return JSX
     const supabase = createClient()
     const { username } = await params
+    const { ref } = await searchParams
+    const showBack = ref === "home"
     const { data: profile } = await supabase.from("profiles").select("*").eq("username", username).single()
 
     if (!profile) {
@@ -60,7 +63,18 @@ export default async function ProfilePage( {params}: { params: Promise<{ usernam
             </div>
 
             <Header hidePillNav>
-                <ProfileActions profileId={profile.id} username={username} />
+                <div className="flex items-center gap-2">
+                    {showBack && (
+                        <Link
+                            href="/"
+                            className="flex items-center gap-1.5 px-3 py-2 rounded-full border border-white/10 bg-zinc-900/80 text-sm font-medium text-zinc-400 hover:text-white backdrop-blur-md transition-all hover:bg-white/10"
+                        >
+                            <ArrowLeft className="w-4 h-4" />
+                            Back
+                        </Link>
+                    )}
+                    <ProfileActions profileId={profile.id} username={username} />
+                </div>
             </Header>
 
             <main className="mx-auto max-w-2xl w-full px-4 pt-24 pb-8">
