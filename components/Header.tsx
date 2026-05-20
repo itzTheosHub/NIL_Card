@@ -96,7 +96,7 @@ export default function Header({ children, hidePillNav }: { children?: React.Rea
                   : "text-zinc-400 hover:text-white"
               }`}
             >
-              I&apos;m an Athlete
+              <span className="hidden sm:inline">I&apos;m an </span>Athlete
             </Link>
             <Link
               href="/for-brands"
@@ -106,7 +106,7 @@ export default function Header({ children, hidePillNav }: { children?: React.Rea
                   : "text-zinc-400 hover:text-white"
               }`}
             >
-              I&apos;m a Business
+              <span className="hidden sm:inline">I&apos;m a </span>Business
             </Link>
           </nav>
         )}
