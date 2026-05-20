@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "NIL-Card",
-  description: "Create your NIL profile card. Share your stats, social reach, and partnership opportunities with brands and sponsors.",
+  description: "Connecting college athletes with brands through shareable NIL profile cards. Built for athletes to showcase their reach and brands to find their perfect partner.",
 };
 
 export default function RootLayout({
