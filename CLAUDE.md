@@ -18,6 +18,19 @@ See `docs/SESSION_LOG.md` for session history.
 2. Direct Meta/TikTok API integration — blocked on developer account approval
 3. Marketplace (`/marketplace`) — built but basic, needs improvement
 
+**Completed this session (2026-05-20):**
+- Favicon: `app/icon.svg` — exact header card icon with glow filter, correct coordinates and aspect ratio
+- Tab title: `NIL-Card` default, profile pages show `[Full Name] | NIL-Card` via `generateMetadata`
+- Site meta description updated to cover both athletes and brands
+- Open Graph + Twitter card metadata wired up in `layout.tsx` — image expected at `public/og-image.png` (1200×630px, not yet created)
+- Profile page: `?ref=home` on See an Example link shows "← Back" button in header via `searchParams`
+- ContactSection: full dark theme rewrite — `bg-zinc-900` modal, `inputClasses` inputs, X close button, sending state, emerald pill success toast, button text shortened to "Contact for Partnerships"
+- Header/ForBrandsHeader: pill nav switched to `absolute left-1/2 -translate-x-1/2` for true centering; `whitespace-nowrap` added; mobile text shortened to "Athlete"/"Business" via `hidden sm:inline`; hamburger normalized to `p-2`; logo wrapped in `flex-1`, right side `flex-1 justify-end`
+- ProfileActions: "Edit Profile" shortened to "Edit"
+- For-brands apply form: budget dropdown (`$50–$100` through `$2,500+`) with subtext, deliverable pill tags (10 options), API route updated to include both in inquiry email
+- GitHub remote updated to `https://github.com/itzTheosHub/NIL_Card.git`
+- `/athlete/demo` page is orphaned (not linked anywhere) — candidate for deletion
+
 **Completed this session (2026-05-19):**
 - Profile page: ambient blobs, pill nav hidden (`hidePillNav`), click-anywhere-to-flip FlippableCard, outer card glow via `boxShadow`
 - `ProfileActions` component: Edit Profile + Copy Link buttons in header, visible to profile owner only
