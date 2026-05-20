@@ -15,6 +15,27 @@ const BUSINESS_TYPES = [
   "Other",
 ]
 
+const BUDGET_RANGES = [
+  "$50–$100",
+  "$100–$500",
+  "$500–$1,000",
+  "$1,000–$2,500",
+  "$2,500+",
+]
+
+const DELIVERABLES = [
+  "Instagram Post",
+  "Instagram Story",
+  "Instagram Reel",
+  "TikTok Video",
+  "Tweet",
+  "YouTube Video",
+  "Product Review or Unboxing",
+  "Social Media Takeover",
+  "Event Appearance",
+  "Brand Ambassador",
+]
+
 export default function ForBrandsApplyPage() {
   const [form, setForm] = useState({
     businessName: "",
@@ -22,12 +43,20 @@ export default function ForBrandsApplyPage() {
     email: "",
     businessType: "",
     city: "",
+    budget: "",
     lookingFor: "",
   })
+  const [selectedDeliverables, setSelectedDeliverables] = useState<string[]>([])
   const [formStatus, setFormStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
 
   function updateForm(field: string, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }))
+  }
+
+  function toggleDeliverable(d: string) {
+    setSelectedDeliverables((prev) =>
+      prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d]
+    )
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -37,7 +66,7 @@ export default function ForBrandsApplyPage() {
       const res = await fetch("/api/brand-inquiry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, deliverables: selectedDeliverables }),
       })
       if (!res.ok) throw new Error()
       setFormStatus("success")
@@ -159,8 +188,49 @@ export default function ForBrandsApplyPage() {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
+                  <label className="text-sm font-medium text-white/60">Budget per athlete</label>
+                  <div className="relative">
+                    <select
+                      required
+                      value={form.budget}
+                      onChange={(e) => updateForm("budget", e.target.value)}
+                      className="w-full appearance-none rounded-xl bg-zinc-800 border border-zinc-700 px-4 py-3 pr-10 text-sm text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
+                    >
+                      <option value="" disabled>Select a range</option>
+                      {BUDGET_RANGES.map((range) => (
+                        <option key={range} value={range} className="bg-zinc-800 text-white">{range}</option>
+                      ))}
+                    </select>
+                    <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2">
                   <label className="text-sm font-medium text-white/60">
-                    What are you looking for?{" "}
+                    Deliverables you want{" "}
+                    <span className="text-white/20">(optional)</span>
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {DELIVERABLES.map((d) => (
+                      <button
+                        key={d}
+                        type="button"
+                        onClick={() => toggleDeliverable(d)}
+                        className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                          selectedDeliverables.includes(d)
+                            ? "bg-gradient-to-r from-violet-600 to-blue-500 text-white"
+                            : "bg-zinc-800 text-zinc-300 hover:bg-zinc-700"
+                        }`}
+                      >
+                        {d}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-sm font-medium text-white/60">
+                    Anything else?{" "}
                     <span className="text-white/20">(optional)</span>
                   </label>
                   <textarea
@@ -168,7 +238,7 @@ export default function ForBrandsApplyPage() {
                     value={form.lookingFor}
                     onChange={(e) => updateForm("lookingFor", e.target.value)}
                     className="rounded-xl bg-zinc-800 border border-zinc-700 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-violet-500 transition resize-none"
-                    placeholder="Sport, audience size, content type, vibe — anything helps."
+                    placeholder="Sport preference, audience size, campaign vibe — anything helps."
                   />
                 </div>
 

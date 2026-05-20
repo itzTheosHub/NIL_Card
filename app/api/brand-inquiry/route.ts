@@ -6,7 +6,7 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 export async function POST(request: Request) {
     try {
         const body = await request.json()
-        const { email, businessName, contactName, businessType, city, lookingFor } = body
+        const { email, businessName, contactName, businessType, city, budget, deliverables, lookingFor } = body
 
         if (!email) {
             return NextResponse.json({ error: "Email is required" }, { status: 400 })
@@ -49,9 +49,21 @@ export async function POST(request: Request) {
                                 <td style="padding: 8px 0; color: #71717a; font-size: 14px;">City</td>
                                 <td style="padding: 8px 0; color: #18181b; font-size: 14px; font-weight: 600;">${city}</td>
                             </tr>
+                            ${budget ? `
+                            <tr>
+                                <td style="padding: 8px 0; color: #71717a; font-size: 14px;">Budget / Athlete</td>
+                                <td style="padding: 8px 0; color: #18181b; font-size: 14px; font-weight: 600;">${budget}</td>
+                            </tr>
+                            ` : ""}
+                            ${deliverables?.length ? `
+                            <tr>
+                                <td style="padding: 8px 0; color: #71717a; font-size: 14px; vertical-align: top;">Deliverables</td>
+                                <td style="padding: 8px 0; color: #18181b; font-size: 14px;">${deliverables.join(", ")}</td>
+                            </tr>
+                            ` : ""}
                             ${lookingFor ? `
                             <tr>
-                                <td style="padding: 8px 0; color: #71717a; font-size: 14px; vertical-align: top;">Looking For</td>
+                                <td style="padding: 8px 0; color: #71717a; font-size: 14px; vertical-align: top;">Notes</td>
                                 <td style="padding: 8px 0; color: #18181b; font-size: 14px;">${lookingFor}</td>
                             </tr>
                             ` : ""}
