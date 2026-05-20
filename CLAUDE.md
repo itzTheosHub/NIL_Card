@@ -34,6 +34,7 @@ See `docs/SESSION_LOG.md` for session history.
 - **Email:** Resend (`onboarding@resend.dev` — needs custom domain)
 - **Deploy:** Vercel
 - **Branch:** `feature/direct-social-api` (active), `master` (stable)
+- **GitHub remote:** `https://github.com/itzTheosHub/NIL_Card.git` (renamed from NIL_Card_CBV)
 
 ---
 
