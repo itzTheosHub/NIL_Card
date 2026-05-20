@@ -18,6 +18,27 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "NIL-Card",
   description: "Connecting college athletes with brands through shareable NIL profile cards. Built for athletes to showcase their reach and brands to find their perfect partner.",
+  openGraph: {
+    title: "NIL-Card",
+    description: "Connecting college athletes with brands through shareable NIL profile cards. Built for athletes to showcase their reach and brands to find their perfect partner.",
+    url: "https://nil-card.com",
+    siteName: "NIL-Card",
+    images: [
+      {
+        url: "https://nil-card.com/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "NIL-Card — Athlete profiles for NIL deals",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "NIL-Card",
+    description: "Connecting college athletes with brands through shareable NIL profile cards.",
+    images: ["https://nil-card.com/og-image.png"],
+  },
 };
 
 export default function RootLayout({
