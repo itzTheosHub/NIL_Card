@@ -33,7 +33,7 @@ export default function ProfileActions({ profileId, username }: { profileId: str
                 className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-violet-600 to-blue-500 hover:from-violet-700 hover:to-blue-600 text-white text-sm font-semibold transition-all hover:shadow-[0_0_16px_rgba(124,58,237,0.4)]"
             >
                 <Pencil className="w-4 h-4" />
-                Edit Profile
+                Edit
             </Link>
             <button
                 onClick={handleCopy}
