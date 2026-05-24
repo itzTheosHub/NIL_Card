@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import {
@@ -16,6 +16,26 @@ import ConnectedAccountsCard, { type PlatformStats } from "@/components/Connecte
 import { createClient } from "@/lib/supabase"
 
 export default function OnboardingConnectPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen flex-col bg-[#08090a] text-white">
+        <div className="pointer-events-none fixed inset-0 overflow-hidden">
+          <div className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-violet-600/20 blur-[120px] rounded-full" />
+          <div className="absolute -top-20 -right-20 w-[400px] h-[400px] bg-blue-500/15 blur-[100px] rounded-full" />
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[400px] h-[300px] bg-violet-600/10 blur-[100px] rounded-full" />
+        </div>
+        <Header hidePillNav />
+        <main className="flex-1 flex items-center justify-center">
+          <Loader2 className="w-8 h-8 text-violet-400 animate-spin" />
+        </main>
+      </div>
+    }>
+      <OnboardingConnectInner />
+    </Suspense>
+  )
+}
+
+function OnboardingConnectInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClient()
