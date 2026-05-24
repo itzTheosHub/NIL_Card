@@ -18,6 +18,13 @@ See `docs/SESSION_LOG.md` for session history.
 2. Direct Meta/TikTok API integration — blocked on developer account approval
 3. Marketplace (`/marketplace`) — built but basic, needs improvement
 
+**Completed this session (2026-05-20, continued):**
+- TikTok sandbox app configured: Login Kit added, scopes (user.info.basic, user.info.profile, user.info.stats, video.list), Web redirect URI set to `https://nil-card.com/api/auth/tiktok/callback`, description saved, Terms/Privacy URLs set
+- Privacy page rewritten to dark theme with all 13 original Termly sections
+- TikTok app submission doc saved at `docs/tiktok-app-submission.md`
+- `/api/auth/tiktok/callback` route not yet built — needed before demo video can be recorded
+- Uncle reviewed UI: loved it. GTM recommendation: biggest ROI is cold outreach to businesses/agencies (demand side first)
+
 **Completed this session (2026-05-20):**
 - Favicon: `app/icon.svg` — exact header card icon with glow filter, correct coordinates and aspect ratio
 - Tab title: `NIL-Card` default, profile pages show `[Full Name] | NIL-Card` via `generateMetadata`

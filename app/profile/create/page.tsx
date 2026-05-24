@@ -16,7 +16,6 @@ export default function CreateProfilePage() {
       socialLinks: any[];
       tags: string[];
       deliverables: string[];
-      phylloUserId?: string | null;
       profilePhotoFile?: File | null;
       featuredPosts: any[];
       awards: any[];
@@ -24,7 +23,7 @@ export default function CreateProfilePage() {
       pressArticles: any[];
 
     }) => {
-    const { formData, socialLinks, tags, deliverables, profilePhotoFile, featuredPosts, awards, highlights, pressArticles, phylloUserId } = payload
+    const { formData, socialLinks, tags, deliverables, profilePhotoFile, featuredPosts, awards, highlights, pressArticles } = payload
     const { data: { user } } = await supabase.auth.getUser()
 
     
@@ -60,7 +59,6 @@ export default function CreateProfilePage() {
       engagement_rate: parseFloat(formData.engagementRate),
       avg_views: parseInt(formData.avgViews),
       total_followers: totalFollowers,
-      phyllo_user_id: phylloUserId ?? null,
     })
 
     if (insertError)

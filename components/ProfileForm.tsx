@@ -1,9 +1,11 @@
 "use client"
 
-import { useState, useRef, useCallback } from "react"
+import { useState, useRef, useCallback, useEffect } from "react"
 import { Sparkles, X, Info, Camera, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import Header from "@/components/Header"
+import ConnectedAccountsCard, { type PlatformStats } from "@/components/ConnectedAccountsCard"
+import { createClient } from "@/lib/supabase"
 
 import {
   Tooltip,
@@ -40,6 +42,9 @@ type EditProfileFormProps = {
   initialAwards?: Award[]
   initialHighlights?: Highlight[]
   initialPressArticles?: PressArticle[]
+
+  /** The authenticated user's profile ID. When provided, the ConnectedAccountsCard is shown (edit mode). */
+  profileId?: string
 
   onSubmit: (payload:
               { formData: FormData;
@@ -126,7 +131,7 @@ const availableDeliverables = [
 const inputClasses = "w-full bg-zinc-800 border border-zinc-700/50 rounded-xl px-4 py-3 text-white placeholder:text-zinc-500 focus:outline-none focus:border-violet-500/50 focus:ring-1 focus:ring-violet-500/30 transition-colors text-sm"
 const labelClasses = "block text-sm font-medium text-zinc-300 mb-1.5"
 
-export default function EditProfilePage({initialFormData, initialSocialLinks, initialTags, initialDeliverables, initialFeaturedPosts, initialAwards, initialHighlights, initialPressArticles ,onSubmit, submitLabel, loadingLabel, pageTitle, pageSubtitle}: EditProfileFormProps) {
+export default function EditProfilePage({initialFormData, initialSocialLinks, initialTags, initialDeliverables, initialFeaturedPosts, initialAwards, initialHighlights, initialPressArticles, profileId, onSubmit, submitLabel, loadingLabel, pageTitle, pageSubtitle}: EditProfileFormProps) {
   const [formData, setFormData] = useState(initialFormData ??{
     fullName: "",
     bio: "[Sport] athlete at [School]. I create content around [topic] and [topic], and I'm passionate about building my brand both on and off the field. With a growing audience across social media, I love connecting with brands that align with my values and lifestyle. Open to partnerships in [industry] and [industry].",
@@ -162,6 +167,77 @@ export default function EditProfilePage({initialFormData, initialSocialLinks, in
 
   // Animation var
   const [isTransitioning, setIsTransitioning] = useState(false)
+
+  // Connected accounts state (edit mode only)
+  const [connectedPlatforms, setConnectedPlatforms] = useState<PlatformStats[]>([])
+  const [connectedAccountsLoaded, setConnectedAccountsLoaded] = useState(false)
+  const supabase = createClient()
+
+  const isEditMode = !!profileId
+
+  // Fetch connected accounts data for the ConnectedAccountsCard
+  const fetchConnectedAccounts = useCallback(async () => {
+    if (!profileId) return
+
+    // Fetch profile for token expiry data
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select(
+        "instagram_user_id, instagram_token_expires_at, tiktok_user_id, tiktok_token_expires_at, tiktok_refresh_expires_at"
+      )
+      .eq("id", profileId)
+      .single()
+
+    // Fetch social stats for both platforms
+    const { data: stats } = await supabase
+      .from("profile_social_stats")
+      .select("platform, username, followers, engagement_rate, avg_views, is_verified, last_synced_at, connected")
+      .eq("profile_id", profileId)
+      .in("platform", ["instagram", "tiktok"])
+
+    const platformData: PlatformStats[] = []
+
+    // Build Instagram status
+    const igStats = stats?.find((s: any) => s.platform === "instagram")
+    platformData.push({
+      platform: "instagram",
+      connected: !!profile?.instagram_user_id && (igStats?.connected ?? false),
+      username: igStats?.username || null,
+      followers: igStats?.followers || null,
+      engagement_rate: igStats?.engagement_rate || null,
+      avg_views: igStats?.avg_views || null,
+      last_synced_at: igStats?.last_synced_at || null,
+      token_expires_at: profile?.instagram_token_expires_at || null,
+    })
+
+    // Build TikTok status
+    const ttStats = stats?.find((s: any) => s.platform === "tiktok")
+    platformData.push({
+      platform: "tiktok",
+      connected: !!profile?.tiktok_user_id && (ttStats?.connected ?? false),
+      username: ttStats?.username || null,
+      followers: ttStats?.followers || null,
+      engagement_rate: null,
+      avg_views: ttStats?.avg_views || null,
+      last_synced_at: ttStats?.last_synced_at || null,
+      token_expires_at: profile?.tiktok_token_expires_at || null,
+      refresh_expires_at: profile?.tiktok_refresh_expires_at || null,
+    })
+
+    setConnectedPlatforms(platformData)
+    setConnectedAccountsLoaded(true)
+  }, [profileId, supabase])
+
+  useEffect(() => {
+    if (isEditMode) {
+      fetchConnectedAccounts()
+    }
+  }, [isEditMode, fetchConnectedAccounts])
+
+  // Build the returnTo path for OAuth redirects
+  const returnToPath = formData.username
+    ? `/profile/${formData.username}/edit`
+    : "/onboarding/connect"
 
   // Toggle tag selection
   const toggleTag = (tag: string) => {
@@ -303,6 +379,16 @@ export default function EditProfilePage({initialFormData, initialSocialLinks, in
                   {loading ? loadingLabel : submitLabel}
                 </button>
               </div>
+
+              {/* Connected Accounts Card — shown in edit mode only, above all content sections */}
+              {isEditMode && connectedAccountsLoaded && (
+                <ConnectedAccountsCard
+                  platforms={connectedPlatforms}
+                  returnTo={returnToPath}
+                  showTokenExpiry={false}
+                  onUpdate={fetchConnectedAccounts}
+                />
+              )}
 
               {!showBackOfCard && (
               <div

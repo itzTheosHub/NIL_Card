@@ -168,9 +168,14 @@ export default function Header({ children, hidePillNav }: { children?: React.Rea
             <>
               <div className="border-t border-white/10" />
               {user ? (
-                <button onClick={() => { setMenuOpen(false); handleSignOut() }} className="text-left text-red-400 hover:text-red-300 transition">
-                  Sign Out
-                </button>
+                <>
+                  <Link href="/settings/connected-accounts" onClick={() => setMenuOpen(false)} className="text-zinc-400 hover:text-white transition">
+                    Connected Accounts
+                  </Link>
+                  <button onClick={() => { setMenuOpen(false); handleSignOut() }} className="text-left text-red-400 hover:text-red-300 transition">
+                    Sign Out
+                  </button>
+                </>
               ) : (
                 <>
                   <Link href="/login" onClick={() => setMenuOpen(false)} className="text-zinc-400 hover:text-white transition">Sign In</Link>

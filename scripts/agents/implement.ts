@@ -7,21 +7,7 @@ dotenv.config({ path: path.resolve(process.cwd(), ".env.local") })
 
 const client = new Anthropic()
 
-const LEGACY_BUILD_STEPS = [
-    "Add DB columns to profiles table (Supabase migration)",
-    "Add env vars to .env.local and Vercel",
-    "Build /api/phyllo/create-user route",
-    "Build /api/phyllo/create-token route",
-    "Install Phyllo SDK, add connect buttons to ProfileForm",
-    "Build /api/phyllo/webhook route",
-    "Build /api/phyllo/disconnect route",
-    "Wire up connected state UI (checkmark, refresh, disconnect)",
-    "Build GET /api/phyllo/stats route",
-    "Add polling loop in usePhylloConnect onAccountConnected",
-    "Fix create-user route for new users with no profile",
-    "Thread phylloUserId through form submit on create page",
-    "Test end-to-end on staging",
-]
+const LEGACY_BUILD_STEPS: string[] = []
 
 function getPrdSlug(prdPath: string): string {
     return path.basename(prdPath, ".md").replace(/^PRD-/, "")

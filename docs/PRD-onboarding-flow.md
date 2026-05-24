@@ -22,21 +22,20 @@ Collected at the point of account creation (after email/password signup).
 ---
 
 ### Stage 2 — Social Connect (`/onboarding/connect`)
-Phyllo connect UI. Users can skip this stage entirely.
+Direct Meta (Instagram Graph API) + TikTok API connect. Phyllo has been replaced. Users can skip this stage entirely.
+
+**Full spec:** See `docs/PRD-social-connect.md`
 
 **Content:**
-- Instagram and TikTok connect buttons (existing `PhylloConnectSection`)
-- Per-platform requirement notices shown **before** the connect button is tapped:
-  - **TikTok:** account must be public and have posts within the last 90 days for engagement stats to populate
-  - **Instagram:** requires a Meta Business Account linked to a verified Meta account. This is enforced by Meta and Phyllo's SDK — the requirement will appear during the OAuth flow if not met. Athletes should switch to a Business/Creator account in Instagram settings before connecting.
+- Instagram and TikTok connect buttons (direct OAuth — no Phyllo)
+- Creator/Business account warning shown before Instagram connect
 - If stats are pulled, show them inline as confirmation
 - "Skip for now" button → proceeds to Stage 3
-- "Continue" button (after connecting at least one) → proceeds to Stage 3
+- "Continue" button → proceeds to Stage 3 (no connection required)
 
 **On connect:**
-- Phyllo user created, SDK token issued, OAuth flow opens
-- On success: followers, username, engagement stats upserted to `profile_social_stats`
-- `phyllo_user_id` saved to `profiles`
+- Direct OAuth flow opens (Meta or TikTok)
+- On success: access token stored in `profiles`, stats upserted to `profile_social_stats` with `is_verified = true`
 
 ---
 
