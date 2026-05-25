@@ -24,6 +24,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "TikTok not connected" }, { status: 400 })
     }
 
+    const userId = user.id
     let accessToken = decryptToken(profile.tiktok_access_token)
 
     const encryptedRefreshToken = profile?.tiktok_refresh_token ?? null
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
           tiktok_refresh_token: encrypted_refresh_token,
           tiktok_token_expires_at: new Date(now.getTime() + newTokens.expires_in * 1000).toISOString(),
           tiktok_refresh_expires_at: new Date(now.getTime() + newTokens.refresh_expires_in * 1000).toISOString(),
-        }).eq("id", user.id)
+        }).eq("id", userId)
         return newTokens.access_token
       } catch {
         return null
@@ -78,12 +79,12 @@ export async function POST(request: NextRequest) {
       const { data: existing } = await supabase
         .from("profile_social_stats")
         .select("id")
-        .eq("profile_id", user.id)
+        .eq("profile_id", userId)
         .eq("platform", "tiktok")
         .single()
 
       const payload = {
-        profile_id: user.id,
+        profile_id: userId,
         platform: "tiktok" as const,
         username: stats.username,
         followers: stats.follower_count,
