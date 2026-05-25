@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase-server"
-import { decryptToken, encryptToken } from "@/lib/token-encryption"
+import { decryptToken } from "@/lib/token-encryption"
 import { fetchAllStats, refreshAccessToken, encryptTokens } from "@/lib/tiktok"
 
 export async function POST(request: NextRequest) {
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
         : `https://www.tiktok.com/@${stats.username}`
 
       await supabase.from("social_links").upsert(
-        { profile_id: user.id, platform: "tiktok", url: tiktokUrl, follower_count: stats.follower_count },
+        { profile_id: userId, platform: "tiktok", url: tiktokUrl, follower_count: stats.follower_count },
         { onConflict: "profile_id,platform" }
       )
 
