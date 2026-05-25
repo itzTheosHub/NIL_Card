@@ -26,10 +26,12 @@ export async function POST(request: NextRequest) {
 
     let accessToken = decryptToken(profile.tiktok_access_token)
 
+    const encryptedRefreshToken = profile?.tiktok_refresh_token ?? null
+
     async function refreshTikTokToken(): Promise<string | null> {
-      if (!profile.tiktok_refresh_token) return null
+      if (!encryptedRefreshToken) return null
       try {
-        const newTokens = await refreshAccessToken(profile.tiktok_refresh_token)
+        const newTokens = await refreshAccessToken(encryptedRefreshToken)
         const { encrypted_access_token, encrypted_refresh_token } = encryptTokens(newTokens)
         const now = new Date()
         await supabase.from("profiles").update({
