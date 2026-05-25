@@ -140,7 +140,8 @@ export async function fetchUserInfo(accessToken: string): Promise<TikTokUserInfo
 
   if (data.error?.code || !data.data?.user) {
     const errMsg = data.error?.message || "Failed to fetch TikTok user info"
-    throw new Error(`TikTok user info failed: ${errMsg}`)
+    const errCode = data.error?.code || "unknown"
+    throw new Error(`TikTok user info failed: ${errMsg} (code: ${errCode})`)
   }
 
   const user = data.data.user

@@ -26,29 +26,51 @@ export async function POST(request: NextRequest) {
 
     let accessToken = decryptToken(profile.tiktok_access_token)
 
-    // Refresh the access token if it's expired
-    const tokenExpired = new Date(profile.tiktok_token_expires_at) < new Date()
-    if (tokenExpired && profile.tiktok_refresh_token) {
+    async function refreshTikTokToken(): Promise<string | null> {
+      if (!profile.tiktok_refresh_token) return null
       try {
         const newTokens = await refreshAccessToken(profile.tiktok_refresh_token)
         const { encrypted_access_token, encrypted_refresh_token } = encryptTokens(newTokens)
         const now = new Date()
-
         await supabase.from("profiles").update({
           tiktok_access_token: encrypted_access_token,
           tiktok_refresh_token: encrypted_refresh_token,
           tiktok_token_expires_at: new Date(now.getTime() + newTokens.expires_in * 1000).toISOString(),
           tiktok_refresh_expires_at: new Date(now.getTime() + newTokens.refresh_expires_in * 1000).toISOString(),
         }).eq("id", user.id)
-
-        accessToken = newTokens.access_token
+        return newTokens.access_token
       } catch {
-        return NextResponse.json({ error: "TikTok token expired — please reconnect" }, { status: 401 })
+        return null
       }
     }
 
+    // Proactively refresh if DB says token is expired
+    const tokenExpired = new Date(profile.tiktok_token_expires_at) < new Date()
+    if (tokenExpired) {
+      const refreshed = await refreshTikTokToken()
+      if (!refreshed) {
+        return NextResponse.json({ error: "TikTok token expired — please reconnect" }, { status: 401 })
+      }
+      accessToken = refreshed
+    }
+
     try {
-      const stats = await fetchAllStats(accessToken)
+      let stats
+      try {
+        stats = await fetchAllStats(accessToken)
+      } catch (err: any) {
+        // If TikTok returns an auth error, try refreshing the token once and retry
+        if (err.message?.includes("code: 10004") || err.message?.includes("access_token") || err.message?.includes("invalid")) {
+          const refreshed = await refreshTikTokToken()
+          if (!refreshed) {
+            return NextResponse.json({ error: "TikTok token invalid — please reconnect" }, { status: 401 })
+          }
+          accessToken = refreshed
+          stats = await fetchAllStats(accessToken)
+        } else {
+          throw err
+        }
+      }
       const now = new Date()
 
       const { data: existing } = await supabase
