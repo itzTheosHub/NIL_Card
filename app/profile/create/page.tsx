@@ -1,14 +1,31 @@
 "use client"
 
+import { useEffect } from "react"
 import ProfileForm from "@/components/ProfileForm"
 import { createClient } from "@/lib/supabase"
 import { useRouter } from "next/navigation"
 
 export default function CreateProfilePage() {
 
-  // Supabase client
   const supabase = createClient()
   const router = useRouter()
+
+  // If user already has a profile, send them to edit instead of showing a blank form
+  useEffect(() => {
+    async function checkExistingProfile() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("username")
+        .eq("id", user.id)
+        .single()
+      if (profile?.username) {
+        router.replace(`/profile/${profile.username}/edit`)
+      }
+    }
+    checkExistingProfile()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleCreate = async (payload:
     {
