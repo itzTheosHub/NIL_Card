@@ -74,7 +74,7 @@ function OnboardingConnectInner() {
     // Fetch social stats for both platforms
     const { data: stats } = await supabase
       .from("profile_social_stats")
-      .select("platform, username, followers, engagement_rate, avg_views, is_verified, last_synced_at, connected")
+      .select("platform, username, followers, engagement_rate, avg_views, total_posts, is_verified, last_synced_at, connected")
       .eq("profile_id", user.id)
       .in("platform", ["instagram", "tiktok"])
 
@@ -89,6 +89,7 @@ function OnboardingConnectInner() {
       followers: igStats?.followers || null,
       engagement_rate: igStats?.engagement_rate || null,
       avg_views: igStats?.avg_views || null,
+      total_posts: igStats?.total_posts || null,
       last_synced_at: igStats?.last_synced_at || null,
       token_expires_at: profile?.instagram_token_expires_at || null,
     })
@@ -102,6 +103,7 @@ function OnboardingConnectInner() {
       followers: ttStats?.followers || null,
       engagement_rate: null,
       avg_views: ttStats?.avg_views || null,
+      total_posts: ttStats?.total_posts || null,
       last_synced_at: ttStats?.last_synced_at || null,
       token_expires_at: profile?.tiktok_token_expires_at || null,
       refresh_expires_at: profile?.tiktok_refresh_expires_at || null,

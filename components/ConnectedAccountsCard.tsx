@@ -20,6 +20,7 @@ type PlatformStats = {
   followers?: number | null
   engagement_rate?: number | null
   avg_views?: number | null
+  total_posts?: number | null
   last_synced_at?: string | null
   token_expires_at?: string | null
   refresh_expires_at?: string | null // TikTok only
@@ -211,14 +212,36 @@ function PlatformRow({
                   Connected
                 </span>
               </div>
-              <p className="text-sm text-zinc-400 mt-0.5 truncate">
-                {stats.username ? `@${stats.username.replace(/^@/, "")}` : "Connected"}
+              {stats.username && (
+                <p className="text-sm text-zinc-400 mt-0.5">
+                  @{stats.username.replace(/^@/, "")}
+                </p>
+              )}
+              {/* Stats grid */}
+              <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5">
                 {stats.followers != null && (
-                  <span> — {formatFollowers(stats.followers)} followers</span>
+                  <span className="text-xs text-zinc-400">
+                    <span className="text-white font-medium">{formatFollowers(stats.followers)}</span> followers
+                  </span>
                 )}
-              </p>
+                {stats.avg_views != null && (
+                  <span className="text-xs text-zinc-400">
+                    <span className="text-white font-medium">{formatFollowers(stats.avg_views)}</span> avg views
+                  </span>
+                )}
+                {stats.engagement_rate != null && (
+                  <span className="text-xs text-zinc-400">
+                    <span className="text-white font-medium">{stats.engagement_rate.toFixed(1)}%</span> engagement
+                  </span>
+                )}
+                {stats.total_posts != null && (
+                  <span className="text-xs text-zinc-400">
+                    <span className="text-white font-medium">{stats.total_posts}</span> posts
+                  </span>
+                )}
+              </div>
               {stats.last_synced_at && (
-                <p className="text-xs text-zinc-500 mt-0.5">
+                <p className="text-xs text-zinc-600 mt-1">
                   Last synced: {timeAgo(stats.last_synced_at)}
                 </p>
               )}
