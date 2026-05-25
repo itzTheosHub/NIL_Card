@@ -117,25 +117,26 @@ export async function refreshAccessToken(encryptedRefreshToken: string): Promise
 
 /**
  * Fetch user info (profile + stats) from TikTok API v2.
+ * Falls back to basic profile fields if stats scope is restricted (e.g. sandbox).
  */
 export async function fetchUserInfo(accessToken: string): Promise<TikTokUserInfo> {
-  const fields = [
-    "display_name",
-    "username",
-    "follower_count",
-    "following_count",
-    "likes_count",
-    "video_count",
-  ].join(",")
+  const fullFields = ["display_name", "username", "follower_count", "following_count", "likes_count", "video_count"].join(",")
+  const basicFields = ["display_name", "username", "follower_count", "following_count"].join(",")
 
-  const res = await fetch(`${TIKTOK_USER_INFO_URL}?fields=${fields}`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  })
+  async function tryFetch(fields: string) {
+    const res = await fetch(`${TIKTOK_USER_INFO_URL}?fields=${fields}`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${accessToken}` },
+    })
+    return res.json()
+  }
 
-  const data = await res.json()
+  let data = await tryFetch(fullFields)
+
+  // If stats fields are blocked (sandbox or scope not approved), retry with basic fields only
+  if ((data.error?.code || !data.data?.user) && fullFields !== basicFields) {
+    data = await tryFetch(basicFields)
+  }
 
   if (data.error?.code || !data.data?.user) {
     const errMsg = data.error?.message || "Failed to fetch TikTok user info"
