@@ -21,6 +21,7 @@ type PlatformStats = {
   engagement_rate?: number | null
   avg_views?: number | null
   total_posts?: number | null
+  likes_count?: number | null
   last_synced_at?: string | null
   token_expires_at?: string | null
   refresh_expires_at?: string | null // TikTok only
@@ -237,6 +238,11 @@ function PlatformRow({
                 {stats.total_posts != null && (
                   <span className="text-xs text-zinc-400">
                     <span className="text-white font-medium">{stats.total_posts}</span> posts
+                  </span>
+                )}
+                {stats.likes_count != null && stats.likes_count > 0 && (
+                  <span className="text-xs text-zinc-400">
+                    <span className="text-white font-medium">{formatFollowers(stats.likes_count)}</span> likes
                   </span>
                 )}
               </div>

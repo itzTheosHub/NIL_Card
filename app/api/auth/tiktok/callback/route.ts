@@ -141,6 +141,7 @@ export async function GET(request: NextRequest) {
     followers: stats.follower_count,
     total_posts: stats.video_count,
     avg_views: stats.avg_views,
+    likes_count: stats.likes_count,
     connected: true,
     is_verified: true,
     last_synced_at: now.toISOString(),
