@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import Providers from "@/components/Providers";
 import Link from "next/link";
 import "./globals.css";
@@ -54,6 +55,7 @@ export default function RootLayout({
       >
         <Providers>
           {children}
+          <Analytics />
           <footer className="border-t border-zinc-800 bg-[#08090a] py-8 px-4">
             <div className="mx-auto max-w-4xl flex flex-col items-center justify-between gap-4 sm:flex-row">
               <span className="text-sm text-zinc-500">
