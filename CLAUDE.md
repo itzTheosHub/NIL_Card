@@ -7,22 +7,45 @@ See `docs/SESSION_LOG.md` for session history.
 
 ## Current Phase: Direct Social API Integration + Buyer Landing Page
 
-**Status:** In progress — waiting on Meta/TikTok developer account approval
+**Status:** TikTok OAuth fully built and tested on production. Instagram OAuth not yet built.
 
-**Phyllo:** Being replaced with direct Meta (Instagram Graph API) + TikTok API via Core Technical Solutions, LLC (uncle's LLC). Branch: `feature/direct-social-api`.
+**Phyllo:** Fully removed. Replaced with direct TikTok API (built). Instagram Graph API next.
 
 **Domain:** `nil-card.com` (use this everywhere, not `nilcard.vercel.app`)
 
 **Next up:**
-1. 3-stage onboarding flow — PRD written at `docs/PRD-onboarding-flow.md`, not started
-2. Direct Meta/TikTok API integration — blocked on developer account approval
-3. Marketplace (`/marketplace`) — built but basic, needs improvement
+1. Record TikTok demo video and submit for app review (unlock production scopes)
+2. Build Instagram OAuth (Steps 3–4 of `docs/PRD-social-connect.md`)
+3. Build verified badge on FlippableCard (Step 8 of PRD)
+4. 3-stage onboarding flow — PRD at `docs/PRD-onboarding-flow.md`, not started
+5. Marketplace (`/marketplace`) — built but basic, needs improvement
+
+**Completed this session (2026-05-24/26):**
+- Removed all Phyllo code (routes, hooks, libs, PhylloConnectSection component)
+- Built TikTok OAuth with PKCE S256, AES-256-GCM token encryption, CSRF httpOnly cookie
+- DB migration: token columns on `profiles`, `is_verified` + `last_synced_at` + `likes_count` on `profile_social_stats`
+- Onboarding connect page (`/onboarding/connect`) — new users land here after signup
+- Connected accounts settings page (`/settings/connected-accounts`) — token health display
+- `ConnectedAccountsCard` component — connect/disconnect/refresh per platform, stats grid
+- `/api/social/refresh` — re-fetches stats, auto-rotates expired tokens
+- `/api/social/disconnect` — clears tokens, marks stats unverified
+- Wired ConnectedAccountsCard into ProfileForm (edit mode only)
+- "Connected Accounts" link in hamburger menu
+- Fixed PKCE error (TikTok requires code_challenge + code_challenge_method=S256)
+- Fixed sandbox stats fallback: retries with basic fields if user.info.stats blocked
+- Fixed `/profile/create` redirecting existing users to their edit page
+- Fixed Suspense boundary for useSearchParams on onboarding page
+- TikTok tested end-to-end on production: connected=true, 63 followers showing
+
+**TikTok sandbox notes:**
+- `user.info.stats` (likes_count, video_count) blocked in sandbox — basic profile fields work
+- Access tokens expire in ~24hrs in sandbox; refresh route auto-rotates on rejection
+- `likes_count` stored in DB, shows in card — will be 0 until app approved for production
 
 **Completed this session (2026-05-20, continued):**
 - TikTok sandbox app configured: Login Kit added, scopes (user.info.basic, user.info.profile, user.info.stats, video.list), Web redirect URI set to `https://nil-card.com/api/auth/tiktok/callback`, description saved, Terms/Privacy URLs set
 - Privacy page rewritten to dark theme with all 13 original Termly sections
 - TikTok app submission doc saved at `docs/tiktok-app-submission.md`
-- `/api/auth/tiktok/callback` route not yet built — needed before demo video can be recorded
 - Uncle reviewed UI: loved it. GTM recommendation: biggest ROI is cold outreach to businesses/agencies (demand side first)
 
 **Completed this session (2026-05-20):**
