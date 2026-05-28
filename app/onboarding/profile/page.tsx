@@ -14,6 +14,7 @@ export default function OnboardingProfilePage() {
   const [pageLoading, setPageLoading] = useState(true)
   const [profileId, setProfileId] = useState<string>("")
   const [initialFormData, setInitialFormData] = useState<any>(undefined)
+  const [initialSocialLinks, setInitialSocialLinks] = useState<any[]>([])
 
   useEffect(() => {
     async function load() {
@@ -29,6 +30,23 @@ export default function OnboardingProfilePage() {
       // No profile row means basics was skipped — send them back
       if (!profile) { router.replace("/onboarding/basics"); return }
 
+      // Load connected social stats and links in parallel
+      const [{ data: stats }, { data: socialLinks }] = await Promise.all([
+        supabase
+          .from("profile_social_stats")
+          .select("platform, followers, avg_views, engagement_rate")
+          .eq("profile_id", profile.id),
+        supabase
+          .from("social_links")
+          .select("platform, url, follower_count")
+          .eq("profile_id", profile.id),
+      ])
+
+      // Pick the platform with the most followers as the primary for avg_views/engagement
+      const primary = stats
+        ?.filter(s => s.followers != null)
+        .sort((a, b) => (b.followers ?? 0) - (a.followers ?? 0))[0]
+
       setProfileId(profile.id)
       setInitialFormData({
         fullName: profile.full_name ?? "",
@@ -38,10 +56,17 @@ export default function OnboardingProfilePage() {
         sport: "",
         gradYear: "",
         division: "",
-        engagementRate: "",
-        avgViews: "",
+        engagementRate: primary?.engagement_rate != null ? String(primary.engagement_rate) : "",
+        avgViews: primary?.avg_views != null ? String(primary.avg_views) : "",
         profilePhotoUrl: "",
       })
+      setInitialSocialLinks(
+        socialLinks?.map(link => ({
+          platform: link.platform,
+          username: link.url,
+          followers: link.follower_count,
+        })) ?? []
+      )
       setPageLoading(false)
     }
     load()
@@ -181,6 +206,7 @@ export default function OnboardingProfilePage() {
       pageTitle="Complete Your Profile"
       pageSubtitle="Fill out your info and get your shareable NIL card in minutes"
       initialFormData={initialFormData}
+      initialSocialLinks={initialSocialLinks}
       profileId={profileId}
     />
   )
