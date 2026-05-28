@@ -245,11 +245,6 @@ function PlatformRow({
                 </span>
               )}
             </div>
-            {stats.last_synced_at && (
-              <p className="text-xs text-zinc-600 mt-1">
-                Last synced: {timeAgo(stats.last_synced_at)}
-              </p>
-            )}
             {/* Actions */}
             <div className="flex items-center gap-2 mt-2.5">
               <button
@@ -271,6 +266,11 @@ function PlatformRow({
                 Disconnect
               </button>
             </div>
+            {stats.last_synced_at && (
+              <p className="text-xs text-zinc-600 mt-1.5">
+                Last synced: {timeAgo(stats.last_synced_at)}
+              </p>
+            )}
           </div>
         </div>
 
