@@ -53,8 +53,8 @@ export default function HomePage() {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
-        setUser(session.user)
         const { data: profile } = await supabase.from("profiles").select("username").eq("id", session.user.id).single()
+        setUser(session.user)
         if (profile) setProfile(profile)
         else setProfile(null)
       } else {
