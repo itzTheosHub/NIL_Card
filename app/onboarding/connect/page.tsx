@@ -193,17 +193,31 @@ function OnboardingConnectInner() {
             </div>
           </div>
 
-          {/* Instagram Creator/Business account warning */}
-          <div className="flex items-start gap-3 px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-500/20 mb-6">
-            <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
-            <div className="text-sm text-amber-200/90">
-              <p className="font-medium text-amber-300 mb-1">
-                Instagram requires a Creator or Business account.
-              </p>
-              <p className="text-amber-200/70 leading-relaxed">
-                Personal accounts won&apos;t work. Switching is free and takes 30 seconds:
-                Settings → Account → Switch to Professional Account. You can switch back anytime.
-              </p>
+          {/* Account requirement warnings */}
+          <div className="flex flex-col gap-3 mb-6">
+            <div className="flex items-start gap-3 px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+              <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+              <div className="text-sm text-amber-200/90">
+                <p className="font-medium text-amber-300 mb-1">
+                  TikTok account must be public.
+                </p>
+                <p className="text-amber-200/70 leading-relaxed">
+                  Private accounts can&apos;t share stats with the API. Set your account to public:
+                  Profile → ··· → Settings → Privacy → Private Account (toggle off).
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+              <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+              <div className="text-sm text-amber-200/90">
+                <p className="font-medium text-amber-300 mb-1">
+                  Instagram requires a Creator or Business account.
+                </p>
+                <p className="text-amber-200/70 leading-relaxed">
+                  Personal accounts won&apos;t work. Switching is free and takes 30 seconds:
+                  Settings → Account → Switch to Professional Account. You can switch back anytime.
+                </p>
+              </div>
             </div>
           </div>
 
