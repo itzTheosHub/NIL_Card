@@ -199,89 +199,78 @@ function PlatformRow({
   if (stats.connected && !tokenExpired) {
     return (
       <div className="space-y-2">
-        <div className="flex items-start justify-between gap-4">
-          {/* Left: platform info */}
-          <div className="flex items-start gap-3 min-w-0">
-            <div className={`mt-0.5 ${config.color}`}>
-              <Icon className="w-5 h-5" />
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-white">{config.label}</span>
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-medium">
-                  <CheckCircle className="w-3 h-3" />
-                  Connected
-                </span>
-              </div>
-              {stats.username && (
-                <p className="text-sm text-zinc-400 mt-0.5">
-                  @{stats.username.replace(/^@/, "")}
-                </p>
-              )}
-              {/* Stats grid */}
-              <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5">
-                {stats.followers != null && (
-                  <span className="text-xs text-zinc-400">
-                    <span className="text-white font-medium">{formatFollowers(stats.followers)}</span> followers
-                  </span>
-                )}
-                {stats.avg_views != null && (
-                  <span className="text-xs text-zinc-400">
-                    <span className="text-white font-medium">{formatFollowers(stats.avg_views)}</span> avg views
-                  </span>
-                )}
-                {stats.engagement_rate != null && (
-                  <span className="text-xs text-zinc-400">
-                    <span className="text-white font-medium">{stats.engagement_rate.toFixed(1)}%</span> engagement
-                  </span>
-                )}
-                {stats.total_posts != null && (
-                  <span className="text-xs text-zinc-400">
-                    <span className="text-white font-medium">{stats.total_posts}</span> posts
-                  </span>
-                )}
-                {stats.likes_count != null && stats.likes_count > 0 && (
-                  <span className="text-xs text-zinc-400">
-                    <span className="text-white font-medium">{formatFollowers(stats.likes_count)}</span> likes
-                  </span>
-                )}
-              </div>
-              {stats.last_synced_at && (
-                <p className="text-xs text-zinc-600 mt-1">
-                  Last synced: {timeAgo(stats.last_synced_at)}
-                </p>
-              )}
-            </div>
+        <div className="flex items-start gap-3">
+          <div className={`mt-0.5 shrink-0 ${config.color}`}>
+            <Icon className="w-5 h-5" />
           </div>
-
-          {/* Right: actions */}
-          <div className="flex items-center gap-2 shrink-0">
-            <button
-              type="button"
-              onClick={handleRefresh}
-              disabled={refreshing || disconnecting}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {refreshing ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              ) : (
-                <RefreshCw className="w-3.5 h-3.5" />
+          <div className="flex-1 min-w-0">
+            {/* Name + badge */}
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span className="text-sm font-semibold text-white">{config.label}</span>
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-medium">
+                <CheckCircle className="w-3 h-3" />
+                Connected
+              </span>
+            </div>
+            {stats.username && (
+              <p className="text-sm text-zinc-400 mt-0.5">
+                @{stats.username.replace(/^@/, "")}
+              </p>
+            )}
+            {/* Stats grid */}
+            <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5">
+              {stats.followers != null && (
+                <span className="text-xs text-zinc-400">
+                  <span className="text-white font-medium">{formatFollowers(stats.followers)}</span> followers
+                </span>
               )}
-              Refresh Stats
-            </button>
-            <button
-              type="button"
-              onClick={handleDisconnect}
-              disabled={refreshing || disconnecting}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 hover:bg-red-500/10 hover:border-red-500/20 text-zinc-400 hover:text-red-400 text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {disconnecting ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              ) : (
-                <Unlink className="w-3.5 h-3.5" />
+              {stats.avg_views != null && (
+                <span className="text-xs text-zinc-400">
+                  <span className="text-white font-medium">{formatFollowers(stats.avg_views)}</span> avg views
+                </span>
               )}
-              Disconnect
-            </button>
+              {stats.engagement_rate != null && (
+                <span className="text-xs text-zinc-400">
+                  <span className="text-white font-medium">{stats.engagement_rate.toFixed(1)}%</span> engagement
+                </span>
+              )}
+              {stats.total_posts != null && (
+                <span className="text-xs text-zinc-400">
+                  <span className="text-white font-medium">{stats.total_posts}</span> posts
+                </span>
+              )}
+              {stats.likes_count != null && stats.likes_count > 0 && (
+                <span className="text-xs text-zinc-400">
+                  <span className="text-white font-medium">{formatFollowers(stats.likes_count)}</span> likes
+                </span>
+              )}
+            </div>
+            {stats.last_synced_at && (
+              <p className="text-xs text-zinc-600 mt-1">
+                Last synced: {timeAgo(stats.last_synced_at)}
+              </p>
+            )}
+            {/* Actions */}
+            <div className="flex items-center gap-2 mt-2.5">
+              <button
+                type="button"
+                onClick={handleRefresh}
+                disabled={refreshing || disconnecting}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {refreshing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+                Refresh Stats
+              </button>
+              <button
+                type="button"
+                onClick={handleDisconnect}
+                disabled={refreshing || disconnecting}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 hover:bg-red-500/10 hover:border-red-500/20 text-zinc-400 hover:text-red-400 text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {disconnecting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Unlink className="w-3.5 h-3.5" />}
+                Disconnect
+              </button>
+            </div>
           </div>
         </div>
 
