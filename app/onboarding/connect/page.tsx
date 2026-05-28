@@ -203,7 +203,7 @@ function OnboardingConnectInner() {
                 </p>
                 <p className="text-amber-200/70 leading-relaxed">
                   Private accounts can&apos;t share stats with the API. Set your account to public:
-                  Profile → ··· → Settings → Privacy → Private Account (toggle off).
+                  Profile → Menu (☰) → Settings → Privacy → Private Account (toggle off).
                 </p>
               </div>
             </div>
