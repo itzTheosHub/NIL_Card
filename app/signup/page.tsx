@@ -54,12 +54,7 @@ export default function SignUpPage() {
         if (error) {
             setError(error.message)
         } else {
-            const { data: profile } = await supabase.from("profiles").select("id, username").eq("id", data.user?.id).single()
-            if (profile) {
-                router.push(`/profile/${profile.username}`)
-            } else {
                 router.push("/onboarding/basics")
-            }
         }
         setLoading(false)
     }
