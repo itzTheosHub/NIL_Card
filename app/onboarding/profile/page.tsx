@@ -117,13 +117,14 @@ export default function OnboardingProfilePage() {
     if (updateError) throw new Error(updateError.message)
 
     if (socialLinks.length > 0) {
-      const { error: socialLinksError } = await supabase.from("social_links").insert(
+      const { error: socialLinksError } = await supabase.from("social_links").upsert(
         socialLinks.map(link => ({
           profile_id: user.id,
           platform: link.platform,
           url: link.username,
           follower_count: link.followers,
-        }))
+        })),
+        { onConflict: "profile_id,platform" }
       )
       if (socialLinksError) throw new Error(socialLinksError.message)
     }
