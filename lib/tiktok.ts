@@ -133,12 +133,13 @@ export async function fetchUserInfo(accessToken: string): Promise<TikTokUserInfo
 
   let data = await tryFetch(fullFields)
 
-  // If stats fields are blocked (sandbox or scope not approved), retry with basic fields only
-  if ((data.error?.code || !data.data?.user) && fullFields !== basicFields) {
+  // TikTok returns error.code = "ok" (truthy string) even on success, so check user presence instead.
+  // If stats fields are blocked (sandbox or scope not approved), retry with basic fields only.
+  if (!data.data?.user && fullFields !== basicFields) {
     data = await tryFetch(basicFields)
   }
 
-  if (data.error?.code || !data.data?.user) {
+  if (!data.data?.user) {
     const errMsg = data.error?.message || "Failed to fetch TikTok user info"
     const errCode = data.error?.code || "unknown"
     throw new Error(`TikTok user info failed: ${errMsg} (code: ${errCode})`)
