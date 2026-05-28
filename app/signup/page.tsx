@@ -58,7 +58,7 @@ export default function SignUpPage() {
             if (profile) {
                 router.push(`/profile/${profile.username}`)
             } else {
-                router.push("/onboarding/connect")
+                router.push("/onboarding/basics")
             }
         }
         setLoading(false)

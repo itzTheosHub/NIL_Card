@@ -173,7 +173,7 @@ function OnboardingConnectInner() {
               <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border border-zinc-700 text-zinc-500">
                 <CheckCircle className="w-4 h-4 text-emerald-400" />
               </div>
-              <span className="text-sm font-medium text-zinc-500">Account</span>
+              <span className="text-sm font-medium text-zinc-500">Basics</span>
             </div>
             <div className="w-12 h-px bg-zinc-700 mx-3" />
             {/* Step 2 — current */}
@@ -283,14 +283,14 @@ function OnboardingConnectInner() {
           {/* Bottom actions */}
           <div className="flex items-center justify-between mt-8">
             <Link
-              href="/profile/create"
+              href="/onboarding/profile"
               className="text-sm text-zinc-500 hover:text-zinc-300 transition-colors"
             >
               Skip for now
             </Link>
 
             <button
-              onClick={() => router.push("/profile/create")}
+              onClick={() => router.push("/onboarding/profile")}
               className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-violet-600 to-blue-500 hover:from-violet-700 hover:to-blue-600 text-white text-sm font-semibold transition-all hover:shadow-[0_0_16px_rgba(124,58,237,0.4)]"
             >
               Continue
