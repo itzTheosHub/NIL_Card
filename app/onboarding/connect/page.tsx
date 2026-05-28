@@ -85,14 +85,14 @@ function OnboardingConnectInner() {
     platformData.push({
       platform: "instagram",
       connected: !!profile?.instagram_user_id && (igStats?.connected ?? false),
-      username: igStats?.username || null,
-      followers: igStats?.followers || null,
-      engagement_rate: igStats?.engagement_rate || null,
-      avg_views: igStats?.avg_views || null,
-      total_posts: igStats?.total_posts || null,
-      likes_count: igStats?.likes_count || null,
-      last_synced_at: igStats?.last_synced_at || null,
-      token_expires_at: profile?.instagram_token_expires_at || null,
+      username: igStats?.username ?? null,
+      followers: igStats?.followers ?? null,
+      engagement_rate: igStats?.engagement_rate ?? null,
+      avg_views: igStats?.avg_views ?? null,
+      total_posts: igStats?.total_posts ?? null,
+      likes_count: igStats?.likes_count ?? null,
+      last_synced_at: igStats?.last_synced_at ?? null,
+      token_expires_at: profile?.instagram_token_expires_at ?? null,
     })
 
     // Build TikTok status
@@ -100,15 +100,15 @@ function OnboardingConnectInner() {
     platformData.push({
       platform: "tiktok",
       connected: !!profile?.tiktok_user_id && (ttStats?.connected ?? false),
-      username: ttStats?.username || null,
-      followers: ttStats?.followers || null,
+      username: ttStats?.username ?? null,
+      followers: ttStats?.followers ?? null,
       engagement_rate: null,
-      avg_views: ttStats?.avg_views || null,
-      total_posts: ttStats?.total_posts || null,
-      likes_count: ttStats?.likes_count || null,
-      last_synced_at: ttStats?.last_synced_at || null,
-      token_expires_at: profile?.tiktok_token_expires_at || null,
-      refresh_expires_at: profile?.tiktok_refresh_expires_at || null,
+      avg_views: ttStats?.avg_views ?? null,
+      total_posts: ttStats?.total_posts ?? null,
+      likes_count: ttStats?.likes_count ?? null,
+      last_synced_at: ttStats?.last_synced_at ?? null,
+      token_expires_at: profile?.tiktok_token_expires_at ?? null,
+      refresh_expires_at: profile?.tiktok_refresh_expires_at ?? null,
     })
 
     setPlatforms(platformData)
