@@ -1,8 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-    images: {
+  async redirects() {
+    return [
+      { source: "/privacy", destination: "/nil-card-privacy-policy", permanent: true },
+      { source: "/terms", destination: "/nil-card-terms-of-service", permanent: true },
+    ]
+  },
+  images: {
       remotePatterns: [
         {
           protocol: 'https',

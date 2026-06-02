@@ -8,7 +8,7 @@ export default function TermsPage() {
 
       <main className="mx-auto max-w-3xl w-full px-4 pt-28 pb-16">
         <div className="mb-10">
-          <h1 className="text-3xl font-bold text-white mb-2">NIL Card Terms of Service</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">NIL-Card Terms of Service</h1>
           <p className="text-zinc-500 text-sm">Last updated: May 20, 2026</p>
         </div>
 
@@ -17,7 +17,7 @@ export default function TermsPage() {
           <section className="space-y-3">
             <h2 className="text-lg font-semibold text-white">1. Acceptance of Terms</h2>
             <p>
-              By accessing or using NIL-Card ("the Platform", "we", "us", or "our") at nil-card.com, you agree to be bound by these Terms of Service. If you do not agree to these terms, do not use the Platform.
+              By accessing or using NIL-Card (&quot;the Platform&quot;, &quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) at nil-card.com, you agree to be bound by these Terms of Service. If you do not agree to these terms, do not use the Platform.
             </p>
           </section>
 
@@ -48,13 +48,13 @@ export default function TermsPage() {
               NIL laws and regulations vary by state, institution, and athletic conference. It is your sole responsibility as an athlete to ensure that any NIL activity conducted through or facilitated by this Platform complies with:
             </p>
             <ul className="list-disc list-inside space-y-1 text-zinc-400 pl-2">
-              <li>Your university or college's NIL policies</li>
-              <li>Your athletic conference's rules and guidelines</li>
+              <li>Your university or college&apos;s NIL policies</li>
+              <li>Your athletic conference&apos;s rules and guidelines</li>
               <li>Applicable federal, state, and local laws</li>
               <li>NCAA or NAIA rules as applicable to your institution</li>
             </ul>
             <p>
-              NIL-Card is not responsible for any disciplinary action, loss of eligibility, or legal consequences arising from an athlete's NIL activities.
+              NIL-Card is not responsible for any disciplinary action, loss of eligibility, or legal consequences arising from an athlete&apos;s NIL activities.
             </p>
           </section>
 
@@ -71,7 +71,7 @@ export default function TermsPage() {
           <section className="space-y-3">
             <h2 className="text-lg font-semibold text-white">6. User Content</h2>
             <p>
-              You retain ownership of the content you submit to the Platform, including profile photos, bios, social media handles, and statistics. By submitting content, you grant NIL-Card a non-exclusive, royalty-free license to display and distribute that content as part of the Platform's normal operation.
+              You retain ownership of the content you submit to the Platform, including profile photos, bios, social media handles, and statistics. By submitting content, you grant NIL-Card a non-exclusive, royalty-free license to display and distribute that content as part of the Platform&apos;s normal operation.
             </p>
             <p>
               You are solely responsible for ensuring that any content you submit does not violate the intellectual property rights, privacy rights, or any other rights of third parties.
@@ -95,7 +95,7 @@ export default function TermsPage() {
           <section className="space-y-3">
             <h2 className="text-lg font-semibold text-white">8. Social Media Data</h2>
             <p>
-              Athletes may connect their social media accounts (including Instagram and TikTok) to the Platform to automatically populate their profile statistics. By connecting a social media account, you authorize NIL-Card to access publicly available metrics such as follower counts and engagement rates through the respective platform's official API.
+              Athletes may connect their social media accounts (including Instagram and TikTok) to the Platform to automatically populate their profile statistics. By connecting a social media account, you authorize NIL-Card to access publicly available metrics such as follower counts and engagement rates through the respective platform&apos;s official API.
             </p>
             <p>
               We do not store your social media passwords. Access tokens are stored securely and used solely to retrieve your profile metrics.
@@ -112,7 +112,7 @@ export default function TermsPage() {
           <section className="space-y-3">
             <h2 className="text-lg font-semibold text-white">10. Disclaimers</h2>
             <p>
-              The Platform is provided "as is" and "as available" without warranties of any kind, express or implied. We do not warrant that the Platform will be uninterrupted, error-free, or free of viruses or other harmful components.
+              The Platform is provided &quot;as is&quot; and &quot;as available&quot; without warranties of any kind, express or implied. We do not warrant that the Platform will be uninterrupted, error-free, or free of viruses or other harmful components.
             </p>
             <p>
               We do not verify the accuracy of athlete statistics or brand information submitted by users. All profile data is self-reported unless explicitly marked as verified.
@@ -143,7 +143,7 @@ export default function TermsPage() {
           <section className="space-y-3">
             <h2 className="text-lg font-semibold text-white">13. Changes to These Terms</h2>
             <p>
-              We may update these Terms from time to time. We will notify users of material changes by updating the "Last updated" date at the top of this page. Continued use of the Platform after changes constitutes acceptance of the updated Terms.
+              We may update these Terms from time to time. We will notify users of material changes by updating the &quot;Last updated&quot; date at the top of this page. Continued use of the Platform after changes constitutes acceptance of the updated Terms.
             </p>
           </section>
 

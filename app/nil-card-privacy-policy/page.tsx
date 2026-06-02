@@ -1,4 +1,4 @@
-﻿import Header from "@/components/Header"
+import Header from "@/components/Header"
 import Link from "next/link"
 
 export default function PrivacyPage() {
@@ -8,7 +8,7 @@ export default function PrivacyPage() {
 
       <main className="mx-auto max-w-3xl w-full px-4 pt-28 pb-16">
         <div className="mb-10">
-          <h1 className="text-3xl font-bold text-white mb-2">NIL Card Privacy Policy</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">NIL-Card Privacy Policy</h1>
           <p className="text-zinc-500 text-sm">Last updated: March 31, 2026</p>
         </div>
 
@@ -251,7 +251,7 @@ export default function PrivacyPage() {
               </a>
               . For terms governing your use of the Platform, see our{" "}
               <Link href="/nil-card-terms-of-service" className="text-violet-400 hover:text-violet-300 transition-colors">
-                Terms of Service
+                NIL-Card Terms of Service
               </Link>
               .
             </p>
