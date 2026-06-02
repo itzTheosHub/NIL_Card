@@ -3,7 +3,6 @@ import { createClient } from "@/lib/supabase-server"
 import {
   exchangeCodeForShortLivedToken,
   exchangeForLongLivedToken,
-  getInstagramAccountId,
   fetchInstagramStats,
   encryptToken,
 } from "@/lib/instagram"
@@ -62,10 +61,12 @@ export async function GET(request: NextRequest) {
   // ── Exchange code → short-lived → long-lived token ─────────
   let longLivedToken: string
   let expiresIn: number
+  let igUserId: string
 
   try {
     const shortLived = await exchangeCodeForShortLivedToken(code, redirectUri)
-    const longLived = await exchangeForLongLivedToken(shortLived)
+    igUserId = shortLived.user_id
+    const longLived = await exchangeForLongLivedToken(shortLived.access_token)
     longLivedToken = longLived.access_token
     expiresIn = longLived.expires_in
   } catch (err: any) {
@@ -75,17 +76,6 @@ export async function GET(request: NextRequest) {
         `${from}?instagram_error=${encodeURIComponent("Failed to connect Instagram. Please try again.")}`,
         baseUrl
       )
-    )
-  }
-
-  // ── Get Instagram Business Account ID ─────────────────────
-  let igUserId: string
-  try {
-    igUserId = await getInstagramAccountId(longLivedToken)
-  } catch (err: any) {
-    console.error("Instagram account ID error:", err.message)
-    return NextResponse.redirect(
-      new URL(`${from}?instagram_error=${encodeURIComponent(err.message)}`, baseUrl)
     )
   }
 

@@ -2,61 +2,51 @@ import crypto from "crypto"
 import { encryptToken, decryptToken } from "@/lib/token-encryption"
 
 const GRAPH_VERSION = "v25.0"
-const GRAPH_BASE = `https://graph.facebook.com/${GRAPH_VERSION}`
-
-function appsecretProof(accessToken: string): string {
-  return crypto
-    .createHmac("sha256", process.env.INSTAGRAM_APP_SECRET!)
-    .update(accessToken)
-    .digest("hex")
-}
-
-function withProof(accessToken: string, extra?: Record<string, string>): string {
-  const params = new URLSearchParams({
-    access_token: accessToken,
-    appsecret_proof: appsecretProof(accessToken),
-    ...extra,
-  })
-  return params.toString()
-}
+const AUTH_BASE = "https://api.instagram.com"
+const GRAPH_BASE = `https://graph.instagram.com/${GRAPH_VERSION}`
 
 export function buildAuthUrl(redirectUri: string, state: string): string {
   const params = new URLSearchParams({
     client_id: process.env.INSTAGRAM_APP_ID!,
     redirect_uri: redirectUri,
-    scope: "instagram_basic,instagram_manage_insights,pages_show_list",
+    scope: "instagram_business_basic,instagram_business_manage_insights",
     response_type: "code",
     state,
   })
-  return `https://www.facebook.com/${GRAPH_VERSION}/dialog/oauth?${params}`
+  return `${AUTH_BASE}/oauth/authorize?${params}`
 }
 
-export async function exchangeCodeForShortLivedToken(code: string, redirectUri: string): Promise<string> {
+export async function exchangeCodeForShortLivedToken(
+  code: string,
+  redirectUri: string
+): Promise<{ access_token: string; user_id: string }> {
   const params = new URLSearchParams({
     client_id: process.env.INSTAGRAM_APP_ID!,
     client_secret: process.env.INSTAGRAM_APP_SECRET!,
+    grant_type: "authorization_code",
     redirect_uri: redirectUri,
     code,
   })
-  const res = await fetch(`${GRAPH_BASE}/oauth/access_token`, {
+  const res = await fetch(`${AUTH_BASE}/oauth/access_token`, {
     method: "POST",
     body: params,
   })
   const data = await res.json()
-  if (data.error) throw new Error(`Token exchange failed: ${data.error.message}`)
-  return data.access_token
+  if (data.error_message || data.error) {
+    throw new Error(`Token exchange failed: ${data.error_message || data.error?.message}`)
+  }
+  return { access_token: data.access_token, user_id: String(data.user_id) }
 }
 
 export async function exchangeForLongLivedToken(
   shortLivedToken: string
 ): Promise<{ access_token: string; expires_in: number }> {
   const params = new URLSearchParams({
-    grant_type: "fb_exchange_token",
-    client_id: process.env.INSTAGRAM_APP_ID!,
+    grant_type: "ig_exchange_token",
     client_secret: process.env.INSTAGRAM_APP_SECRET!,
-    fb_exchange_token: shortLivedToken,
+    access_token: shortLivedToken,
   })
-  const res = await fetch(`${GRAPH_BASE}/oauth/access_token?${params}`)
+  const res = await fetch(`https://graph.instagram.com/access_token?${params}`)
   const data = await res.json()
   if (data.error) throw new Error(`Long-lived token exchange failed: ${data.error.message}`)
   return { access_token: data.access_token, expires_in: data.expires_in }
@@ -66,44 +56,13 @@ export async function refreshLongLivedToken(
   currentToken: string
 ): Promise<{ access_token: string; expires_in: number }> {
   const params = new URLSearchParams({
-    grant_type: "fb_exchange_token",
-    client_id: process.env.INSTAGRAM_APP_ID!,
-    client_secret: process.env.INSTAGRAM_APP_SECRET!,
-    fb_exchange_token: currentToken,
+    grant_type: "ig_refresh_token",
+    access_token: currentToken,
   })
-  const res = await fetch(`${GRAPH_BASE}/oauth/access_token?${params}`)
+  const res = await fetch(`https://graph.instagram.com/refresh_access_token?${params}`)
   const data = await res.json()
   if (data.error) throw new Error(`Token refresh failed: ${data.error.message}`)
   return { access_token: data.access_token, expires_in: data.expires_in }
-}
-
-export async function getInstagramAccountId(accessToken: string): Promise<string> {
-  const pagesRes = await fetch(`${GRAPH_BASE}/me/accounts?${withProof(accessToken)}`)
-  const pagesData = await pagesRes.json()
-
-  if (pagesData.error) {
-    throw new Error(`Failed to fetch Facebook Pages: ${pagesData.error.message}`)
-  }
-
-  if (!pagesData.data?.length) {
-    throw new Error(
-      "No Facebook Pages found. Link your Instagram account to a Facebook Page first, then try again."
-    )
-  }
-
-  for (const page of pagesData.data) {
-    const igRes = await fetch(
-      `${GRAPH_BASE}/${page.id}?fields=instagram_business_account&${withProof(accessToken)}`
-    )
-    const igData = await igRes.json()
-    if (igData.instagram_business_account?.id) {
-      return igData.instagram_business_account.id
-    }
-  }
-
-  throw new Error(
-    "No Instagram Business or Creator account linked to your Facebook Page. Switch your Instagram to a Professional account first."
-  )
 }
 
 export interface InstagramStats {
@@ -119,7 +78,7 @@ export async function fetchInstagramStats(
   accessToken: string
 ): Promise<InstagramStats> {
   const profileRes = await fetch(
-    `${GRAPH_BASE}/${igUserId}?fields=username,followers_count,media_count&${withProof(accessToken)}`
+    `${GRAPH_BASE}/${igUserId}?fields=username,followers_count,media_count&access_token=${accessToken}`
   )
   const profileData = await profileRes.json()
 
@@ -130,10 +89,10 @@ export async function fetchInstagramStats(
   let engagementRate: number | null = null
   let avgViews: number | null = null
 
-  // Engagement rate from recent posts (like_count + comments_count)
+  // Engagement rate from recent posts
   try {
     const mediaRes = await fetch(
-      `${GRAPH_BASE}/${igUserId}/media?fields=id,media_type,like_count,comments_count&limit=20&${withProof(accessToken)}`
+      `${GRAPH_BASE}/${igUserId}/media?fields=id,media_type,like_count,comments_count&limit=20&access_token=${accessToken}`
     )
     const mediaData = await mediaRes.json()
 
@@ -147,12 +106,12 @@ export async function fetchInstagramStats(
         ((totalInteractions / posts.length / profileData.followers_count) * 100).toFixed(2)
       )
     }
-  } catch { /* non-fatal — engagement stays null */ }
+  } catch { /* non-fatal */ }
 
   // Avg views from recent videos/reels
   try {
     const videoRes = await fetch(
-      `${GRAPH_BASE}/${igUserId}/media?fields=id,media_type,video_views&limit=20&${withProof(accessToken)}`
+      `${GRAPH_BASE}/${igUserId}/media?fields=id,media_type,video_views&limit=20&access_token=${accessToken}`
     )
     const videoData = await videoRes.json()
 
@@ -166,7 +125,7 @@ export async function fetchInstagramStats(
         )
       }
     }
-  } catch { /* non-fatal — avg_views stays null */ }
+  } catch { /* non-fatal */ }
 
   return {
     username: profileData.username,
@@ -177,5 +136,4 @@ export async function fetchInstagramStats(
   }
 }
 
-// Re-export encrypt/decrypt for use in routes
 export { encryptToken, decryptToken }
