@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase-server"
-import { decryptToken } from "@/lib/token-encryption"
+import { decryptToken, encryptToken } from "@/lib/token-encryption"
 import { fetchAllStats, refreshAccessToken, encryptTokens } from "@/lib/tiktok"
+import { fetchInstagramStats, refreshLongLivedToken } from "@/lib/instagram"
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient()
@@ -119,8 +120,82 @@ export async function POST(request: NextRequest) {
   }
 
   if (platform === "instagram") {
-    // Instagram refresh — placeholder until Instagram OAuth is built
-    return NextResponse.json({ error: "Instagram not yet supported" }, { status: 400 })
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("instagram_access_token, instagram_user_id, instagram_token_expires_at")
+      .eq("id", user.id)
+      .single()
+
+    if (!profile?.instagram_access_token || !profile?.instagram_user_id) {
+      return NextResponse.json({ error: "Instagram not connected" }, { status: 400 })
+    }
+
+    const userId = user.id
+    let accessToken = decryptToken(profile.instagram_access_token)
+
+    // Proactively refresh if token expires within 7 days
+    const tokenExpiry = new Date(profile.instagram_token_expires_at)
+    const daysLeft = Math.floor((tokenExpiry.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+
+    if (daysLeft < 7) {
+      try {
+        const refreshed = await refreshLongLivedToken(accessToken)
+        accessToken = refreshed.access_token
+        const newExpiry = new Date(Date.now() + refreshed.expires_in * 1000)
+        await supabase.from("profiles").update({
+          instagram_access_token: encryptToken(accessToken),
+          instagram_token_expires_at: newExpiry.toISOString(),
+        }).eq("id", userId)
+      } catch (err: any) {
+        console.error("Instagram token refresh error:", err.message)
+        return NextResponse.json({ error: "Instagram token expired — please reconnect" }, { status: 401 })
+      }
+    }
+
+    try {
+      const stats = await fetchInstagramStats(profile.instagram_user_id, accessToken)
+      const now = new Date()
+
+      const { data: existing } = await supabase
+        .from("profile_social_stats")
+        .select("id")
+        .eq("profile_id", userId)
+        .eq("platform", "instagram")
+        .single()
+
+      const payload = {
+        profile_id: userId,
+        platform: "instagram" as const,
+        username: stats.username,
+        followers: stats.followers,
+        total_posts: stats.media_count,
+        avg_views: stats.avg_views,
+        engagement_rate: stats.engagement_rate,
+        connected: true,
+        is_verified: true,
+        last_synced_at: now.toISOString(),
+      }
+
+      if (existing) {
+        await supabase.from("profile_social_stats").update(payload).eq("id", existing.id)
+      } else {
+        await supabase.from("profile_social_stats").insert(payload)
+      }
+
+      await supabase.from("social_links").upsert(
+        {
+          profile_id: userId,
+          platform: "instagram",
+          url: `https://www.instagram.com/${stats.username}`,
+          follower_count: stats.followers,
+        },
+        { onConflict: "profile_id,platform" }
+      )
+
+      return NextResponse.json({ ok: true })
+    } catch (err: any) {
+      return NextResponse.json({ error: err.message || "Failed to refresh Instagram stats" }, { status: 500 })
+    }
   }
 
   return NextResponse.json({ error: "Unknown platform" }, { status: 400 })
