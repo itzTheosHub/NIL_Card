@@ -1,7 +1,24 @@
+import crypto from "crypto"
 import { encryptToken, decryptToken } from "@/lib/token-encryption"
 
 const GRAPH_VERSION = "v25.0"
 const GRAPH_BASE = `https://graph.facebook.com/${GRAPH_VERSION}`
+
+function appsecretProof(accessToken: string): string {
+  return crypto
+    .createHmac("sha256", process.env.INSTAGRAM_APP_SECRET!)
+    .update(accessToken)
+    .digest("hex")
+}
+
+function withProof(accessToken: string, extra?: Record<string, string>): string {
+  const params = new URLSearchParams({
+    access_token: accessToken,
+    appsecret_proof: appsecretProof(accessToken),
+    ...extra,
+  })
+  return params.toString()
+}
 
 export function buildAuthUrl(redirectUri: string, state: string): string {
   const params = new URLSearchParams({
@@ -61,7 +78,7 @@ export async function refreshLongLivedToken(
 }
 
 export async function getInstagramAccountId(accessToken: string): Promise<string> {
-  const pagesRes = await fetch(`${GRAPH_BASE}/me/accounts?access_token=${accessToken}`)
+  const pagesRes = await fetch(`${GRAPH_BASE}/me/accounts?${withProof(accessToken)}`)
   const pagesData = await pagesRes.json()
 
   if (pagesData.error) {
@@ -76,7 +93,7 @@ export async function getInstagramAccountId(accessToken: string): Promise<string
 
   for (const page of pagesData.data) {
     const igRes = await fetch(
-      `${GRAPH_BASE}/${page.id}?fields=instagram_business_account&access_token=${accessToken}`
+      `${GRAPH_BASE}/${page.id}?fields=instagram_business_account&${withProof(accessToken)}`
     )
     const igData = await igRes.json()
     if (igData.instagram_business_account?.id) {
@@ -102,7 +119,7 @@ export async function fetchInstagramStats(
   accessToken: string
 ): Promise<InstagramStats> {
   const profileRes = await fetch(
-    `${GRAPH_BASE}/${igUserId}?fields=username,followers_count,media_count&access_token=${accessToken}`
+    `${GRAPH_BASE}/${igUserId}?fields=username,followers_count,media_count&${withProof(accessToken)}`
   )
   const profileData = await profileRes.json()
 
@@ -116,7 +133,7 @@ export async function fetchInstagramStats(
   // Engagement rate from recent posts (like_count + comments_count)
   try {
     const mediaRes = await fetch(
-      `${GRAPH_BASE}/${igUserId}/media?fields=id,media_type,like_count,comments_count&limit=20&access_token=${accessToken}`
+      `${GRAPH_BASE}/${igUserId}/media?fields=id,media_type,like_count,comments_count&limit=20&${withProof(accessToken)}`
     )
     const mediaData = await mediaRes.json()
 
@@ -135,7 +152,7 @@ export async function fetchInstagramStats(
   // Avg views from recent videos/reels
   try {
     const videoRes = await fetch(
-      `${GRAPH_BASE}/${igUserId}/media?fields=id,media_type,video_views&limit=20&access_token=${accessToken}`
+      `${GRAPH_BASE}/${igUserId}/media?fields=id,media_type,video_views&limit=20&${withProof(accessToken)}`
     )
     const videoData = await videoRes.json()
 
