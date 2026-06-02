@@ -8,7 +8,7 @@ export default function TermsPage() {
 
       <main className="mx-auto max-w-3xl w-full px-4 pt-28 pb-16">
         <div className="mb-10">
-          <h1 className="text-3xl font-bold text-white mb-2">Terms of Service</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">NIL Card Terms of Service</h1>
           <p className="text-zinc-500 text-sm">Last updated: May 20, 2026</p>
         </div>
 
