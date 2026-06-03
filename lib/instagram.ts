@@ -2,7 +2,8 @@ import crypto from "crypto"
 import { encryptToken, decryptToken } from "@/lib/token-encryption"
 
 const GRAPH_VERSION = "v25.0"
-const AUTH_BASE = "https://api.instagram.com"
+const AUTH_BASE = "https://www.instagram.com"
+const TOKEN_BASE = "https://api.instagram.com"
 const GRAPH_BASE = `https://graph.instagram.com/${GRAPH_VERSION}`
 
 export function buildAuthUrl(redirectUri: string, state: string): string {
@@ -27,7 +28,7 @@ export async function exchangeCodeForShortLivedToken(
     redirect_uri: redirectUri,
     code,
   })
-  const res = await fetch(`${AUTH_BASE}/oauth/access_token`, {
+  const res = await fetch(`${TOKEN_BASE}/oauth/access_token`, {
     method: "POST",
     body: params,
   })
