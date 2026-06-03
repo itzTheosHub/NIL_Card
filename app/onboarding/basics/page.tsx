@@ -33,7 +33,7 @@ export default function OnboardingBasicsPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push("/login"); return }
       const { data: profile } = await supabase.from("profiles").select("username").eq("id", user.id).maybeSingle()
-      if (profile?.username) { router.replace("/onboarding/connect"); return }
+      if (profile?.username) { window.location.replace("/onboarding/connect"); return }
       setPageLoading(false)
     }
     check()
