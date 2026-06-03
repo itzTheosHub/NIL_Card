@@ -65,9 +65,10 @@ export async function GET(request: NextRequest) {
 
   try {
     const shortLived = await exchangeCodeForShortLivedToken(code, redirectUri)
+    console.log("IG short-lived exchange result:", JSON.stringify({ userId: shortLived.user_id, hasToken: !!shortLived.access_token, tokenPrefix: shortLived.access_token?.slice(0, 10) }))
     igUserId = shortLived.user_id
     longLivedToken = shortLived.access_token
-    expiresIn = 3600 // short-lived fallback; long-lived exchange TBD
+    expiresIn = 3600
   } catch (err: any) {
     console.error("Instagram token exchange error:", err.message)
     return NextResponse.redirect(

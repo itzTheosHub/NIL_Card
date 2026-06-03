@@ -85,11 +85,12 @@ export async function fetchInstagramStats(
   accessToken: string
 ): Promise<InstagramStats> {
   const profileRes = await fetch(
-    `${GRAPH_BASE}/${igUserId}?fields=username,followers_count,media_count&access_token=${accessToken}`
+    `${GRAPH_BASE}/me?fields=id,username,followers_count,media_count&access_token=${accessToken}`
   )
   const profileData = await profileRes.json()
 
   if (profileData.error) {
+    console.error("IG profile fetch raw error:", JSON.stringify(profileData.error))
     throw new Error(`Instagram profile fetch failed: ${profileData.error.message}`)
   }
 
