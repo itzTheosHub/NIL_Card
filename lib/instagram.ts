@@ -47,7 +47,10 @@ export async function exchangeForLongLivedToken(
     client_secret: process.env.INSTAGRAM_APP_SECRET!,
     access_token: shortLivedToken,
   })
-  const res = await fetch(`https://graph.instagram.com/access_token?${params}`)
+  const res = await fetch(`https://graph.instagram.com/access_token`, {
+    method: "POST",
+    body: params,
+  })
   const data = await res.json()
   if (data.error) throw new Error(`Long-lived token exchange failed: ${data.error.message}`)
   return { access_token: data.access_token, expires_in: data.expires_in }
@@ -60,7 +63,10 @@ export async function refreshLongLivedToken(
     grant_type: "ig_refresh_token",
     access_token: currentToken,
   })
-  const res = await fetch(`https://graph.instagram.com/refresh_access_token?${params}`)
+  const res = await fetch(`https://graph.instagram.com/refresh_access_token`, {
+    method: "POST",
+    body: params,
+  })
   const data = await res.json()
   if (data.error) throw new Error(`Token refresh failed: ${data.error.message}`)
   return { access_token: data.access_token, expires_in: data.expires_in }
