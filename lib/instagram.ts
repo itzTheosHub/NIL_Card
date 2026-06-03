@@ -85,7 +85,8 @@ export async function fetchInstagramStats(
   accessToken: string
 ): Promise<InstagramStats> {
   const profileRes = await fetch(
-    `${GRAPH_BASE}/me?fields=id,username,followers_count,media_count&access_token=${accessToken}`
+    `https://graph.instagram.com/me?fields=id,username,followers_count,media_count`,
+    { headers: { Authorization: `Bearer ${accessToken}` } }
   )
   const profileData = await profileRes.json()
 
@@ -100,7 +101,8 @@ export async function fetchInstagramStats(
   // Engagement rate from recent posts
   try {
     const mediaRes = await fetch(
-      `${GRAPH_BASE}/${igUserId}/media?fields=id,media_type,like_count,comments_count&limit=20&access_token=${accessToken}`
+      `https://graph.instagram.com/me/media?fields=id,media_type,like_count,comments_count&limit=20`,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
     )
     const mediaData = await mediaRes.json()
 
@@ -119,7 +121,8 @@ export async function fetchInstagramStats(
   // Avg views from recent videos/reels
   try {
     const videoRes = await fetch(
-      `${GRAPH_BASE}/${igUserId}/media?fields=id,media_type,video_views&limit=20&access_token=${accessToken}`
+      `https://graph.instagram.com/me/media?fields=id,media_type,video_views&limit=20`,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
     )
     const videoData = await videoRes.json()
 
